@@ -48,9 +48,11 @@ class Cell:
     def get_next_state(self):
         if self.state == 0:
             # conductor -> electron head if one or two neighbors are electron heads
-            n_neighbor_heads = sum(1 for n in self.neighbors if n.state == 1)
+            n_neighbor_heads = sum(1 for neighbor in self.neighbors if neighbor.state == 1)
             if n_neighbor_heads in (1, 2):
                 self.next_state = 1
+            else:
+                self.next_state = 0
         elif self.state == 1:
             # electron head -> electron tail
             self.next_state = 2
