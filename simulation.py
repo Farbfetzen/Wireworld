@@ -133,7 +133,7 @@ class Wireworld:
         # the count of the neighboring electron heads would be wrong.
         # This is why there are two loops here instead of one.
         for c in self.cells.values():
-            c.get_next_state()
+            c.prepare_update()
         for c in self.cells.values():
             c.update()
 

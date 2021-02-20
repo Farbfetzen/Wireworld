@@ -37,7 +37,7 @@ class Cell:
                 neighbor.neighbors.append(self)
         return neighbors
 
-    def get_next_state(self):
+    def prepare_update(self):
         if self.state == 0:
             # conductor -> electron head if one or two neighbors are electron heads
             n_neighbor_heads = sum(1 for neighbor in self.neighbors if neighbor.state == 1)
