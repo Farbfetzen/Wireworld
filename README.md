@@ -7,7 +7,7 @@ Each cell can be in one of four states:
 3. electron head
 4. electron tail
 
-The simulation proceeds in discrete steps. Each step changes the cells change in the following ways:
+The simulation proceeds in discrete steps. Each step changes the cells in the following ways:
 - empty &rarr; empty
 - electron head &rarr; electron tail
 - electron tail &rarr; conductor
@@ -17,7 +17,7 @@ The simulation proceeds in discrete steps. Each step changes the cells change in
 An AND gate. Conductor cells are orange, electron heads are blue and electron tails are red. The inputs are on the left and the output is to the right.  
 ![and gate](screenshot_and_gate.png)
 
-A half adder made from a XOR gate and two diodes. Left are the two inputs. Top right is the ones output and bottom right is the twos output.  
+A half adder made from one XOR gate and two diodes. Left are the two inputs. Top right is the ones output and bottom right is the twos output.  
 ![half_adder](screenshot_half_adder.png)
 
 ### Controls
