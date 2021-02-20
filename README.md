@@ -13,6 +13,11 @@ The simulation proceeds in discrete steps. Each step changes the cells in the fo
 - electron tail &rarr; conductor
 - conductor &rarr; Electron head if one or two neighboring cells are electron heads, else it remains a conductor. A cell neighbors another if it is orthogonally or diagonally adjacent ([Moore neighborhood](https://en.wikipedia.org/wiki/Moore_neighborhood)).
 
+Run wireworld.py to start it. Requires Python 3 and PyGame 2.
+```
+python wireworld.py
+```
+
 ### Examples
 An AND gate. Conductor cells are orange, electron heads are blue and electron tails are red. The inputs are on the left and the output is to the right.  
 ![and gate](screenshot_and_gate.png)
