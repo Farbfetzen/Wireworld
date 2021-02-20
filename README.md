@@ -14,10 +14,10 @@ The simulation proceeds in discrete steps. Each step changes the cells change in
 - conductor &rarr; Electron head if one or two neighboring cells are electron heads, else it remains a conductor. A cell neighbors another if it is orthogonally or diagonally adjacent ([Moore neighborhood](https://en.wikipedia.org/wiki/Moore_neighborhood)).
 
 ### Examples
-An AND gate. The two inputs are to the left and the output is to the right.
+An AND gate. The two inputs are to the left and the output is to the right.  
 ![and gate](screenshot_and_gate.png)
 
-A half adder made from a XOR gate and two diodes. Left are the two inputs. Top right is the ones output and bottom right is the twos output. 
+A half adder made from a XOR gate and two diodes. Left are the two inputs. Top right is the ones output and bottom right is the twos output.  
 ![half_adder](screenshot_half_adder.png)
 
 ### Controls
