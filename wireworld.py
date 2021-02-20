@@ -33,13 +33,14 @@ class Cell:
         self.screen_pos = screen_pos
         self.state = state  # 0 = conductor, 1 = electron head, 2 = electron tail
         self.next_state = state
-        self.neighbors = self.get_neighbors(cells)
+        self.cells = cells
+        self.neighbors = self.get_neighbors()
 
-    def get_neighbors(self, cells):
+    def get_neighbors(self):
         neighbors = []
         x, y = self.grid_pos
         for dx, dy in ((-1, -1), (0, -1), (1, -1), (1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0)):
-            neighbor = cells.get((x + dx, y + dy), None)
+            neighbor = self.cells.get((x + dx, y + dy), None)
             if neighbor is not None:
                 neighbors.append(neighbor)
                 neighbor.neighbors.append(self)
@@ -70,8 +71,8 @@ class Cell:
             (self.screen_pos, CELL_SIZE)
         )
 
-    def delete(self, cells):
-        del cells[self.grid_pos]
+    def delete(self):
+        del self.cells[self.grid_pos]
         for neighbor in self.neighbors:
             neighbor.neighbors.remove(self)
 
@@ -82,6 +83,8 @@ class Wireworld:
         self.window = pygame.display.set_mode(WINDOW_SIZE)
         pygame.display.set_caption("Wireworld")
         self.background = self.create_background()
+        self.cells = {}
+
         self.mouse_grid_position = None  # highlighted cell coordinates
         self.mouse_position_snapped = None  # mouse position snapped to the grid
         self.mouse_is_pressed = False
@@ -197,11 +200,11 @@ class Wireworld:
             if self.mouse_pressed_button == 1:
                 cell.state += 1
                 if cell.state > 2:
-                    cell.delete(self.cells)
+                    cell.delete()
             else:
                 cell.state -= 1
                 if cell.state < 0:
-                    cell.delete(self.cells)
+                    cell.delete()
 
     def step(self):
         for cell in self.cells.values():
