@@ -25,6 +25,7 @@ The simulation proceeds in discrete steps. Each step changes the cells change in
 - **Backspace**: Delete all electrons.
 - **Ctrl + Backspace**: Delete all wires.
 - **ESC**: Quit.
+- **F1**: Show debug info.
 
 ### Ideas for improvement
 - Scrolling and zooming the map.

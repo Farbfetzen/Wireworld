@@ -1,15 +1,15 @@
 import os
 os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "1"
 import pygame
-
+import pygame.freetype
 
 BACKGROUND_COLOR = pygame.Color(32, 32, 32)
 GRID_COLOR = pygame.Color(64, 64, 64)
 MOUSE_HIGHLIGHT_COLOR = pygame.Color(0, 255, 0)
 CELL_COLORS = (
-    pygame.Color("#b87333"),  # conductor, state 0
-    pygame.Color(0, 64, 255),  # electron head, state 1
-    pygame.Color(255, 64, 0)  # electron tail, state 2
+    pygame.Color(184, 115, 51),  # conductor
+    pygame.Color(0, 64, 255),  # electron head
+    pygame.Color(255, 64, 0)  # electron tail
 )
 
 FPS = 60
@@ -84,11 +84,18 @@ class Wireworld:
         self.background = self.create_background()
         self.mouse_grid_position = None  # highlighted cell coordinates
         self.mouse_position_snapped = None  # mouse position snapped to the grid
-        self.cells = {}
         self.mouse_is_pressed = False
         self.mouse_pressed_button = None
         self.last_changed_cell_position = None
+        self.sps = SPS
         self.simulation_is_running = False
+
+        self.debug_info_visible = False
+        self.debug_info_margin = pygame.Vector2(5, 5)
+        self.debug_font = pygame.freetype.SysFont(("consolas", "inconsolate", "monospace"), 16)
+        self.debug_font.pad = True
+        self.debug_font.fgcolor = pygame.Color(220, 220, 220)
+        self.debug_line_spacing = pygame.Vector2(0, self.debug_font.get_sized_height())
 
     @staticmethod
     def create_background():
@@ -101,9 +108,8 @@ class Wireworld:
         return background
 
     def run(self):
-        sps = SPS
         # all times are in milliseconds
-        time_per_step = 1000 / sps
+        time_per_step = 1000 / self.sps
         time_since_last_step = 0
         clock = pygame.time.Clock()
 
@@ -124,11 +130,11 @@ class Wireworld:
                             self.simulation_is_running = True
                             time_since_last_step = time_per_step - dt
                     elif event.key in (pygame.K_PLUS, pygame.K_KP_PLUS):
-                        sps = min(sps * 2, SPS_MAX)
-                        time_per_step = 1000 / sps
+                        self.sps = min(self.sps * 2, SPS_MAX)
+                        time_per_step = 1000 / self.sps
                     elif event.key in (pygame.K_MINUS, pygame.K_KP_MINUS):
-                        sps = max(sps / 2, SPS_MIN)
-                        time_per_step = 1000 / sps
+                        self.sps = max(self.sps / 2, SPS_MIN)
+                        time_per_step = 1000 / self.sps
                     elif event.key == pygame.K_s:
                         self.step()
                         if self.simulation_is_running:
@@ -140,6 +146,8 @@ class Wireworld:
                             for cell in self.cells.values():
                                 cell.state = 0
                                 cell.next_state = 0
+                    elif event.key == pygame.K_F1:
+                        self.debug_info_visible = not self.debug_info_visible
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button in (1, 3):  # 1 = left click, 3 = right click
                         self.mouse_pressed_button = event.button
@@ -158,6 +166,9 @@ class Wireworld:
                     self.step()
 
             self.draw()
+            if self.debug_info_visible:
+                self.draw_debug_info(clock.get_fps())
+            pygame.display.flip()
 
     def update_mouse_positions(self):
         if pygame.mouse.get_focused():
@@ -209,7 +220,18 @@ class Wireworld:
                 (self.mouse_position_snapped, CELL_SIZE),
                 1
             )
-        pygame.display.flip()
+
+    def draw_debug_info(self, fps):
+        self.debug_font.render_to(
+            self.window,
+            self.debug_info_margin,
+            f"fps: {fps:.0f}"
+        )
+        self.debug_font.render_to(
+            self.window,
+            self.debug_info_margin + self.debug_line_spacing,
+            f"steps per second: {self.sps:.0f}"
+        )
 
 
 Wireworld().run()
