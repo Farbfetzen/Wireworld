@@ -1,7 +1,6 @@
 import os
 os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "1"
 import pygame
-from pprint import pprint
 
 
 BACKGROUND_COLOR = pygame.Color(32, 32, 32)
@@ -12,8 +11,12 @@ CELL_COLORS = (
     pygame.Color(0, 64, 255),  # electron head, state 1
     pygame.Color(255, 64, 0)  # electron tail, state 2
 )
+
 FPS = 60
-SPS = 1  # steps per second
+SPS = 4  # steps per second
+SPS_MIN = 1
+SPS_MAX = 128
+
 CELL_WIDTH = 20
 CELL_SIZE = (CELL_WIDTH, CELL_WIDTH)
 # Window sizes are +1 so the rightmost and bottomost gridlines are also visible.
@@ -99,8 +102,9 @@ class Wireworld:
         return background
 
     def run(self):
+        sps = SPS
         # all times are in milliseconds
-        time_per_step = 1000 / SPS
+        time_per_step = 1000 / sps
         time_since_last_step = 0
         clock = pygame.time.Clock()
 
@@ -120,6 +124,12 @@ class Wireworld:
                         else:
                             self.simulation_is_running = True
                             time_since_last_step = time_per_step - dt
+                    elif event.key in (pygame.K_PLUS, pygame.K_KP_PLUS):
+                        sps = min(sps * 2, SPS_MAX)
+                        time_per_step = 1000 / sps
+                    elif event.key in (pygame.K_MINUS, pygame.K_KP_MINUS):
+                        sps = max(sps / 2, SPS_MIN)
+                        time_per_step = 1000 / sps
 
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button in (1, 3):  # 1 = left click, 3 = right click
@@ -173,9 +183,6 @@ class Wireworld:
                 cell.state -= 1
                 if cell.state < 0:
                     cell.delete(self.cells)
-        # # DEBUG
-        # d = {pos: [n.grid_pos for n in cell.neighbors] for pos, cell in self.cells.items()}
-        # pprint(d)
 
     def step(self):
         for cell in self.cells.values():
