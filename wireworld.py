@@ -129,6 +129,12 @@ class Wireworld:
                         time_per_step = 1000 / sps
                     elif event.key == pygame.K_s:
                         self.step()
+                        if self.simulation_is_running:
+                            self.simulation_is_running = False
+                    elif event.key == pygame.K_BACKSPACE:
+                        for cell in self.cells.values():
+                            cell.state = 0
+                            cell.next_state = 0
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button in (1, 3):  # 1 = left click, 3 = right click
                         self.mouse_pressed_button = event.button
