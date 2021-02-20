@@ -1,5 +1,4 @@
 # Wireworld
-
 [Wireworld](https://en.wikipedia.org/wiki/Wireworld) is a cellular automaton which is well suited for simulating logic gates.
 
 Each cell can be in one of four states:
@@ -25,7 +24,7 @@ The simulation proceeds in discrete steps. Each step changes the cells change in
 - **Backspace**: Delete all electrons.
 - **Ctrl + Backspace**: Delete all wires.
 - **ESC**: Quit.
-- **F1**: Show debug info.
+
 
 ### Ideas for improvement
 - Scrolling and zooming the map.

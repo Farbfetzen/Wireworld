@@ -84,7 +84,6 @@ class Wireworld:
         pygame.display.set_caption("Wireworld")
         self.background = self.create_background()
         self.cells = {}
-
         self.mouse_grid_position = None  # highlighted cell coordinates
         self.mouse_position_snapped = None  # mouse position snapped to the grid
         self.mouse_is_pressed = False
@@ -92,13 +91,6 @@ class Wireworld:
         self.last_changed_cell_position = None
         self.sps = SPS
         self.simulation_is_running = False
-
-        self.debug_info_visible = False
-        self.debug_info_margin = pygame.Vector2(5, 5)
-        self.debug_font = pygame.freetype.SysFont(("consolas", "inconsolate", "monospace"), 16)
-        self.debug_font.pad = True
-        self.debug_font.fgcolor = pygame.Color(220, 220, 220)
-        self.debug_line_spacing = pygame.Vector2(0, self.debug_font.get_sized_height())
 
     @staticmethod
     def create_background():
@@ -149,8 +141,6 @@ class Wireworld:
                             for cell in self.cells.values():
                                 cell.state = 0
                                 cell.next_state = 0
-                    elif event.key == pygame.K_F1:
-                        self.debug_info_visible = not self.debug_info_visible
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button in (1, 3):  # 1 = left click, 3 = right click
                         self.mouse_pressed_button = event.button
@@ -169,9 +159,6 @@ class Wireworld:
                     self.step()
 
             self.draw()
-            if self.debug_info_visible:
-                self.draw_debug_info(clock.get_fps())
-            pygame.display.flip()
 
     def update_mouse_positions(self):
         if pygame.mouse.get_focused():
@@ -223,18 +210,7 @@ class Wireworld:
                 (self.mouse_position_snapped, CELL_SIZE),
                 1
             )
-
-    def draw_debug_info(self, fps):
-        self.debug_font.render_to(
-            self.window,
-            self.debug_info_margin,
-            f"fps: {fps:.0f}"
-        )
-        self.debug_font.render_to(
-            self.window,
-            self.debug_info_margin + self.debug_line_spacing,
-            f"steps per second: {self.sps:.0f}"
-        )
+        pygame.display.flip()
 
 
 Wireworld().run()
