@@ -8,16 +8,16 @@ Each cell can be in one of four states:
 3. electron head
 4. electron tail
 
-The simulation proceeds in discrete steps. In each step the cells change in the following ways:
-- empty -> empty
-- electron head -> electron tail
-- electron tail -> conductor
-- conductor -> Electron head if one or two neighboring cells are electron heads, else it remains a conductor. A cell neighbors another if it is directly orthogonally or diagonally adjacent ([Moore neighborhood](https://en.wikipedia.org/wiki/Moore_neighborhood)).
+The simulation proceeds in discrete steps. Each step changes the cells change in the following ways:
+- empty &rarr; empty
+- electron head &rarr; electron tail
+- electron tail &rarr; conductor
+- conductor &rarr; Electron head if one or two neighboring cells are electron heads, else it remains a conductor. A cell neighbors another if it is orthogonally or diagonally adjacent ([Moore neighborhood](https://en.wikipedia.org/wiki/Moore_neighborhood)).
 
 
 ### Controls
-- **left click**: Increment cell state.
-- **right click**: Decrement cell state.
+- **Left click**: Increment cell state.
+- **Right click**: Decrement cell state.
 - **Space**: Pause/unpause the simulation.
 - **S**: Single step.
 - **+**: Double the speed.
