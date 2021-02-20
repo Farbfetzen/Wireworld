@@ -87,7 +87,7 @@ class Wireworld:
                     self.last_changed_cell_position = None
 
             if self.mouse_is_pressed:
-                self.process_mouse()
+                self.process_mouse_press()
 
             if self.simulation_is_running:
                 time_since_last_step += dt
@@ -108,8 +108,9 @@ class Wireworld:
             self.mouse_grid_position = None
             self.mouse_position_snapped = None
 
-    def process_mouse(self):
-        if self.mouse_grid_position == self.last_changed_cell_position:
+    def process_mouse_press(self):
+        if (self.mouse_grid_position is None
+                or self.mouse_grid_position == self.last_changed_cell_position):
             return
         self.last_changed_cell_position = self.mouse_grid_position
         selected_cell = self.cells.get(self.mouse_grid_position, None)
@@ -128,6 +129,9 @@ class Wireworld:
                 selected_cell.decrement_state()
 
     def step(self):
+        # All cells must be prepared before they are all updated. Otherwise
+        # the count of the neighboring electron heads would be wrong.
+        # This is why there are two loops here instead of one.
         for c in self.cells.values():
             c.get_next_state()
         for c in self.cells.values():
