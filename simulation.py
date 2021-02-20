@@ -1,5 +1,4 @@
 import pygame
-import pygame.freetype
 
 import cell
 
@@ -7,26 +6,21 @@ import cell
 BACKGROUND_COLOR = pygame.Color(32, 32, 32)
 GRID_COLOR = pygame.Color(64, 64, 64)
 MOUSE_HIGHLIGHT_COLOR = pygame.Color(0, 255, 0)
-
 FPS = 60
 SPS = 4  # steps per second
 SPS_MIN = 1
-SPS_MAX = 128
-
-# Window sizes are +1 so the rightmost and bottomost gridlines are also visible.
-WINDOW_WIDTH = 1000 + 1
-WINDOW_HEIGHT = 800 + 1
-assert (WINDOW_WIDTH - 1) % cell.CELL_WIDTH == 0
-assert (WINDOW_HEIGHT - 1) % cell.CELL_WIDTH == 0
-WINDOW_SIZE = (WINDOW_WIDTH, WINDOW_HEIGHT)
+SPS_MAX = 256
 
 
 class Wireworld:
-    def __init__(self):
+    def __init__(self, window_size, cell_width):
         pygame.init()
-        self.window = pygame.display.set_mode(WINDOW_SIZE)
+        self.window = pygame.display.set_mode(window_size)
         pygame.display.set_caption("Wireworld")
-        self.background = self.create_background()
+        self.cell_width = cell_width
+        self.cell_size = (cell_width, cell_width)
+        self.background = self.create_background(window_size)
+        self.cell_images = cell.create_cell_images(self.cell_size)
         self.cells = {}
         self.mouse_grid_position = None  # highlighted cell coordinates
         self.mouse_position_snapped = None  # mouse position snapped to the grid
@@ -36,14 +30,14 @@ class Wireworld:
         self.sps = SPS
         self.simulation_is_running = False
 
-    @staticmethod
-    def create_background():
-        background = pygame.Surface(WINDOW_SIZE)
+    def create_background(self, window_size):
+        background = pygame.Surface(window_size)
         background.fill(BACKGROUND_COLOR)
-        for x in range(0, WINDOW_WIDTH, cell.CELL_WIDTH):
-            pygame.draw.line(background, GRID_COLOR, (x, 0), (x, WINDOW_HEIGHT))
-        for y in range(0, WINDOW_HEIGHT, cell.CELL_WIDTH):
-            pygame.draw.line(background, GRID_COLOR, (0, y), (WINDOW_WIDTH, y))
+        window_width, window_height = window_size
+        for x in range(0, window_width, self.cell_width):
+            pygame.draw.line(background, GRID_COLOR, (x, 0), (x, window_height))
+        for y in range(0, window_height, self.cell_width):
+            pygame.draw.line(background, GRID_COLOR, (0, y), (window_width, y))
         return background
 
     def run(self):
@@ -83,8 +77,7 @@ class Wireworld:
                             self.cells = {}
                         else:
                             for c in self.cells.values():
-                                c.state = 0
-                                c.next_state = 0
+                                c.remove_electricity()
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button in (1, 3):  # 1 = left click, 3 = right click
                         self.mouse_pressed_button = event.button
@@ -107,10 +100,10 @@ class Wireworld:
     def update_mouse_positions(self):
         if pygame.mouse.get_focused():
             screen_x, screen_y = pygame.mouse.get_pos()
-            grid_x = screen_x // cell.CELL_WIDTH
-            grid_y = screen_y // cell.CELL_WIDTH
+            grid_x = screen_x // self.cell_width
+            grid_y = screen_y // self.cell_width
             self.mouse_grid_position = (grid_x, grid_y)
-            self.mouse_position_snapped = (grid_x * cell.CELL_WIDTH, grid_y * cell.CELL_WIDTH)
+            self.mouse_position_snapped = (grid_x * self.cell_width, grid_y * self.cell_width)
         else:
             self.mouse_grid_position = None
             self.mouse_position_snapped = None
@@ -125,17 +118,14 @@ class Wireworld:
                 self.mouse_grid_position,
                 self.mouse_position_snapped,
                 self.mouse_pressed_button - 1,
-                self.cells
+                self.cells,
+                self.cell_images
             )
         else:
             if self.mouse_pressed_button == 1:
-                selected_cell.state += 1
-                if selected_cell.state > 2:
-                    selected_cell.delete()
+                selected_cell.increment_state()
             else:
-                selected_cell.state -= 1
-                if selected_cell.state < 0:
-                    selected_cell.delete()
+                selected_cell.decrement_state()
 
     def step(self):
         for c in self.cells.values():
@@ -151,7 +141,7 @@ class Wireworld:
             pygame.draw.rect(
                 self.window,
                 MOUSE_HIGHLIGHT_COLOR,
-                (self.mouse_position_snapped, cell.CELL_SIZE),
+                (self.mouse_position_snapped, self.cell_size),
                 1
             )
         pygame.display.flip()

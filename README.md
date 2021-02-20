@@ -26,7 +26,13 @@ The simulation proceeds in discrete steps. Each step changes the cells change in
 - **ESC**: Quit.
 
 
-### Ideas for improvement
+### Optional Command Line Arguments
+- **-h**, **--help**: Show a help message and exit.
+- **-w**, **--window-size \<width> \<height>**: Specify the window width and height in pixels.
+- **-c**, **--cell-width \<width>**: Specify the cell width in pixels.
+
+
+### Ideas for Improvement
 - Scrolling and zooming the map.
 - Saving and loading of maps.
 - Selecting groups of cells for
