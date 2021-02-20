@@ -1,6 +1,7 @@
 
 ### Controls
 - **Space**: Pause/unpause the simulation.
+- **S**: Single step.
 - **left click**: Increment cell state.
 - **right click**: Decrement cell state.
 - **+**: Double the speed.

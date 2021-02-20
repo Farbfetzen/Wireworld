@@ -48,10 +48,7 @@ class Cell:
     def get_next_state(self):
         if self.state == 0:
             # conductor -> electron head if one or two neighbors are electron heads
-            n_neighbor_heads = 0
-            for neighbor in self.neighbors:
-                if neighbor.state == 1:
-                    n_neighbor_heads += 1
+            n_neighbor_heads = sum(1 for n in self.neighbors if n.state == 1)
             if n_neighbor_heads in (1, 2):
                 self.next_state = 1
         elif self.state == 1:
@@ -130,7 +127,8 @@ class Wireworld:
                     elif event.key in (pygame.K_MINUS, pygame.K_KP_MINUS):
                         sps = max(sps / 2, SPS_MIN)
                         time_per_step = 1000 / sps
-
+                    elif event.key == pygame.K_s:
+                        self.step()
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button in (1, 3):  # 1 = left click, 3 = right click
                         self.mouse_pressed_button = event.button
@@ -138,7 +136,6 @@ class Wireworld:
                 elif event.type == pygame.MOUSEBUTTONUP:
                     self.mouse_is_pressed = False
                     self.last_changed_cell_position = None
-            # TODO speed++, speed--
 
             if self.mouse_is_pressed:
                 self.process_mouse()
