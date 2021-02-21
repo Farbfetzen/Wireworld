@@ -1,18 +1,15 @@
 import pygame
 
-
-CONDUCTOR_COLOR = pygame.Color(184, 115, 51)
-ELECTRON_HEAD_COLOR = pygame.Color(0, 64, 255)
-ELECTRON_TAIL_COLOR = pygame.Color(255, 64, 0)
+from src import constants
 
 
 def create_cell_images(cell_size):
     conductor_image = pygame.Surface(cell_size)
-    conductor_image.fill(CONDUCTOR_COLOR)
+    conductor_image.fill(constants.CONDUCTOR_COLOR)
     head_image = pygame.Surface(cell_size)
-    head_image.fill(ELECTRON_HEAD_COLOR)
+    head_image.fill(constants.ELECTRON_HEAD_COLOR)
     tail_image = pygame.Surface(cell_size)
-    tail_image.fill(ELECTRON_TAIL_COLOR)
+    tail_image.fill(constants.ELECTRON_TAIL_COLOR)
     return conductor_image, head_image, tail_image
 
 

@@ -1,15 +1,7 @@
 import pygame
 
-import cell
-
-
-BACKGROUND_COLOR = pygame.Color(32, 32, 32)
-GRID_COLOR = pygame.Color(64, 64, 64)
-MOUSE_HIGHLIGHT_COLOR = pygame.Color(0, 255, 0)
-FPS = 60
-SPS = 4  # steps per second
-SPS_MIN = 1
-SPS_MAX = 256
+from src import cell
+from src import constants
 
 
 class Wireworld:
@@ -27,17 +19,17 @@ class Wireworld:
         self.mouse_is_pressed = False
         self.mouse_pressed_button = None
         self.last_changed_cell_position = None
-        self.sps = SPS
+        self.sps = constants.SPS
         self.simulation_is_running = False
 
     def create_background(self, window_size):
         background = pygame.Surface(window_size)
-        background.fill(BACKGROUND_COLOR)
+        background.fill(constants.BACKGROUND_COLOR)
         window_width, window_height = window_size
         for x in range(0, window_width, self.cell_width):
-            pygame.draw.line(background, GRID_COLOR, (x, 0), (x, window_height))
+            pygame.draw.line(background, constants.GRID_COLOR, (x, 0), (x, window_height))
         for y in range(0, window_height, self.cell_width):
-            pygame.draw.line(background, GRID_COLOR, (0, y), (window_width, y))
+            pygame.draw.line(background, constants.GRID_COLOR, (0, y), (window_width, y))
         return background
 
     def run(self):
@@ -47,7 +39,7 @@ class Wireworld:
         clock = pygame.time.Clock()
 
         while True:
-            dt = clock.tick(FPS)
+            dt = clock.tick(constants.FPS)
 
             self.update_mouse_positions()
             for event in pygame.event.get():
@@ -63,10 +55,10 @@ class Wireworld:
                             self.simulation_is_running = True
                             time_since_last_step = time_per_step - dt
                     elif event.key in (pygame.K_PLUS, pygame.K_KP_PLUS):
-                        self.sps = min(self.sps * 2, SPS_MAX)
+                        self.sps = min(self.sps * 2, constants.SPS_MAX)
                         time_per_step = 1000 / self.sps
                     elif event.key in (pygame.K_MINUS, pygame.K_KP_MINUS):
-                        self.sps = max(self.sps / 2, SPS_MIN)
+                        self.sps = max(self.sps / 2, constants.SPS_MIN)
                         time_per_step = 1000 / self.sps
                     elif event.key == pygame.K_s:
                         self.step()
@@ -144,7 +136,7 @@ class Wireworld:
         if self.mouse_grid_position is not None:
             pygame.draw.rect(
                 self.window,
-                MOUSE_HIGHLIGHT_COLOR,
+                constants.MOUSE_HIGHLIGHT_COLOR,
                 (self.mouse_position_snapped, self.cell_size),
                 1
             )

@@ -2,7 +2,8 @@ import argparse
 import os
 os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "1"
 
-import simulation
+from src import simulation
+from src import constants
 
 
 parser = argparse.ArgumentParser()
@@ -13,7 +14,7 @@ parser.add_argument(
     nargs=2,
     type=int,
     help="Specify the window width and height in pixels.",
-    default=(1001, 801)  # +1 so that the rightmost and bottommost grid lines are visible
+    default=constants.DEEFAULT_WINDOW_SIZE
 )
 parser.add_argument(
     "-c",
@@ -21,7 +22,7 @@ parser.add_argument(
     metavar="<width>",
     type=int,
     help="Specify the cell width in pixels.",
-    default=20
+    default=constants.DEFAULT_CELL_WIDTH
 )
 args = parser.parse_args()
 
