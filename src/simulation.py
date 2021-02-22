@@ -66,7 +66,7 @@ class Wireworld:
                             self.simulation_is_running = False
                     elif event.key == pygame.K_BACKSPACE:
                         if event.mod & pygame.KMOD_CTRL:
-                            self.cells = {}
+                            self.cells.clear()
                         else:
                             for c in self.cells.values():
                                 c.remove_electricity()
