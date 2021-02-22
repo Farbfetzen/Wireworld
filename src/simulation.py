@@ -1,5 +1,6 @@
 import pygame
 
+from src import camera
 from src import cell
 from src import constants
 
@@ -7,30 +8,14 @@ from src import constants
 class Wireworld:
     def __init__(self, window_size, cell_width):
         pygame.init()
-        self.window = pygame.display.set_mode(window_size)
-        pygame.display.set_caption("Wireworld")
-        self.cell_width = cell_width
-        self.cell_size = (cell_width, cell_width)
-        self.background = self.create_background(window_size)
-        self.cell_images = cell.create_cell_images(self.cell_size)
         self.cells = {}
-        self.mouse_grid_position = None  # highlighted cell coordinates
-        self.mouse_position_snapped = None  # mouse position snapped to the grid
+        self.camera = camera.Camera(window_size, cell_width, self.cells)
+        self.cell_width = cell_width
         self.mouse_is_pressed = False
         self.mouse_pressed_button = None
         self.last_changed_cell_position = None
         self.sps = constants.SPS
         self.simulation_is_running = False
-
-    def create_background(self, window_size):
-        background = pygame.Surface(window_size)
-        background.fill(constants.BACKGROUND_COLOR)
-        window_width, window_height = window_size
-        for x in range(0, window_width, self.cell_width):
-            pygame.draw.line(background, constants.GRID_COLOR, (x, 0), (x, window_height))
-        for y in range(0, window_height, self.cell_width):
-            pygame.draw.line(background, constants.GRID_COLOR, (0, y), (window_width, y))
-        return background
 
     def run(self):
         # all times are in milliseconds
@@ -41,7 +26,8 @@ class Wireworld:
         while True:
             dt = clock.tick(constants.FPS)
 
-            self.update_mouse_positions()
+            self.camera.update_mouse_positions()
+            # TODO: Put event stuff into separate method.
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     return
@@ -87,32 +73,21 @@ class Wireworld:
                     time_since_last_step -= time_per_step
                     self.step()
 
-            self.draw()
-
-    def update_mouse_positions(self):
-        if pygame.mouse.get_focused():
-            screen_x, screen_y = pygame.mouse.get_pos()
-            grid_x = screen_x // self.cell_width
-            grid_y = screen_y // self.cell_width
-            self.mouse_grid_position = (grid_x, grid_y)
-            self.mouse_position_snapped = (grid_x * self.cell_width, grid_y * self.cell_width)
-        else:
-            self.mouse_grid_position = None
-            self.mouse_position_snapped = None
+            self.camera.draw()
 
     def process_mouse_press(self):
-        if (self.mouse_grid_position is None
-                or self.mouse_grid_position == self.last_changed_cell_position):
+        if (self.camera.mouse_grid_position is None
+                or self.camera.mouse_grid_position == self.last_changed_cell_position):
             return
-        self.last_changed_cell_position = self.mouse_grid_position
-        selected_cell = self.cells.get(self.mouse_grid_position, None)
+        self.last_changed_cell_position = self.camera.mouse_grid_position
+        selected_cell = self.cells.get(self.camera.mouse_grid_position, None)
         if selected_cell is None:
-            self.cells[self.mouse_grid_position] = cell.Cell(
-                self.mouse_grid_position,
-                self.mouse_position_snapped,
+            self.cells[self.camera.mouse_grid_position] = cell.Cell(
+                self.camera.mouse_grid_position,
+                self.camera.mouse_position_snapped,
                 self.mouse_pressed_button - 1,
                 self.cells,
-                self.cell_images
+                self.camera.cell_images
             )
         else:
             if self.mouse_pressed_button == 1:
@@ -128,16 +103,3 @@ class Wireworld:
             c.prepare_update()
         for c in self.cells.values():
             c.update()
-
-    def draw(self):
-        self.window.blit(self.background, (0, 0))
-        for c in self.cells.values():
-            c.draw(self.window)
-        if self.mouse_grid_position is not None:
-            pygame.draw.rect(
-                self.window,
-                constants.MOUSE_HIGHLIGHT_COLOR,
-                (self.mouse_position_snapped, self.cell_size),
-                1
-            )
-        pygame.display.flip()
