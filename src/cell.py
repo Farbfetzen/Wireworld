@@ -14,11 +14,12 @@ def create_cell_images(cell_size):
 
 
 class Cell:
-    def __init__(self, grid_pos, screen_pos, state, cells, images):
-        self.grid_pos = grid_pos
-        self.screen_pos = screen_pos
-        self.state = state  # 0 = conductor, 1 = electron head, 2 = electron tail
-        self.next_state = state
+    def __init__(self, grid_pos, screen_pos, cells, images):
+        self.grid_position = grid_pos
+        self.screen_position_x_original, self.screen_position_y_original = screen_pos
+        self.screen_position_x, self.screen_position_y = screen_pos
+        self.state = 0  # 0 = conductor, 1 = electron head, 2 = electron tail
+        self.next_state = self.state
         self.cells = cells
         self.images = images
         self.image = images[self.state]
@@ -26,7 +27,7 @@ class Cell:
 
     def get_neighbors(self):
         neighbors = []
-        x, y = self.grid_pos
+        x, y = self.grid_position
         for dx, dy in ((-1, -1), (0, -1), (1, -1), (1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0)):
             neighbor = self.cells.get((x + dx, y + dy), None)
             if neighbor is not None:
@@ -53,19 +54,16 @@ class Cell:
         self.state = self.next_state
         self.image = self.images[self.state]
 
-    def draw(self, target_surface):
-        target_surface.blit(self.image, self.screen_pos)
+    def update_screen_position(self, camera_x, camera_y):
+        self.screen_position_x = self.screen_position_x_original - camera_x
+        self.screen_position_y = self.screen_position_y_original - camera_y
+
+    def is_visible(self, camera_rect):
+        return camera_rect.collidepoint(self.screen_position_x, self.screen_position_y)
 
     def increment_state(self):
         self.state += 1
         if self.state > 2:
-            self.delete()
-        else:
-            self.image = self.images[self.state]
-
-    def decrement_state(self):
-        self.state -= 1
-        if self.state < 0:
             self.delete()
         else:
             self.image = self.images[self.state]
@@ -76,6 +74,6 @@ class Cell:
         self.image = self.images[self.state]
 
     def delete(self):
-        del self.cells[self.grid_pos]
+        del self.cells[self.grid_position]
         for neighbor in self.neighbors:
             neighbor.neighbors.remove(self)

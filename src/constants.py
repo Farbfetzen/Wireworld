@@ -15,3 +15,5 @@ MOUSE_HIGHLIGHT_COLOR = pygame.Color(0, 255, 0)
 CONDUCTOR_COLOR = pygame.Color(184, 115, 51)
 ELECTRON_HEAD_COLOR = pygame.Color(0, 64, 255)
 ELECTRON_TAIL_COLOR = pygame.Color(255, 64, 0)
+
+WORLD_SCROLL_SPEED = 1  # pixels per milliecond

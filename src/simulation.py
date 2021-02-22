@@ -12,7 +12,6 @@ class Wireworld:
         self.camera = camera.Camera(window_size, cell_width, self.cells)
         self.cell_width = cell_width
         self.mouse_is_pressed = False
-        self.mouse_pressed_button = None
         self.last_changed_cell_position = None
         self.sps = constants.SPS
         self.simulation_is_running = False
@@ -57,12 +56,14 @@ class Wireworld:
                             for c in self.cells.values():
                                 c.remove_electricity()
                 elif event.type == pygame.MOUSEBUTTONDOWN:
-                    if event.button in (1, 3):  # 1 = left click, 3 = right click
-                        self.mouse_pressed_button = event.button
+                    if event.button == 1:  # 1 = left click
                         self.mouse_is_pressed = True
                 elif event.type == pygame.MOUSEBUTTONUP:
                     self.mouse_is_pressed = False
                     self.last_changed_cell_position = None
+                elif (event.type == pygame.MOUSEMOTION
+                      and event.buttons[2]):  # 2 = right mouse button
+                    self.camera.scroll(*event.rel)
 
             if self.mouse_is_pressed:
                 self.process_mouse_press()
@@ -85,15 +86,11 @@ class Wireworld:
             self.cells[self.camera.mouse_grid_position] = cell.Cell(
                 self.camera.mouse_grid_position,
                 self.camera.mouse_position_snapped,
-                self.mouse_pressed_button - 1,
                 self.cells,
                 self.camera.cell_images
             )
         else:
-            if self.mouse_pressed_button == 1:
-                selected_cell.increment_state()
-            else:
-                selected_cell.decrement_state()
+            selected_cell.increment_state()
 
     def step(self):
         # All cells must be prepared before they are all updated. Otherwise
