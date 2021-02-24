@@ -5,6 +5,8 @@ from src import cell
 from src import constants
 
 
+# TODO: Separate main loop logic from simulation logic.
+
 class Wireworld:
     def __init__(self, window_size, cell_width):
         pygame.init()
