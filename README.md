@@ -26,12 +26,12 @@ A half adder. Left are the two inputs. Top right is the ones output and bottom r
 ![half_adder](screenshot_half_adder.png)
 
 ### Controls
-- **Left click**: Increment cell state.
-- **Right click**: Decrement cell state.
+- **Left click**: Change cell state.
+- **Right click and drag**: Move the map.
 - **Space**: Pause/unpause the simulation.
 - **S**: Single step.
-- **+**: Double the speed.
-- **-**: Halve the speed.
+- **+**: Increase the speed.
+- **-**: Decrease the speed.
 - **Backspace**: Delete all electrons.
 - **Ctrl + Backspace**: Delete all wires.
 - **ESC**: Quit.
