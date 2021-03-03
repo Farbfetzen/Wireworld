@@ -56,6 +56,10 @@ class Camera:
     #             direction_y * scroll_speed_times_dt
     #         )
 
+    def zoom(self):
+        # TODO: Implement this. With mouse wheel and keyboard.
+        pass
+
     def update_mouse_positions(self):
         if pygame.mouse.get_focused():
             screen_x, screen_y = pygame.mouse.get_pos()
