@@ -26,6 +26,18 @@ class Camera:
         )
         self.rect_for_cell_drawing.bottomright = self.rect.bottomright
 
+        self.show_debug_info = False
+        self.debug_font = pygame.freetype.SysFont(
+            "consolas, inconsolate, monospace",
+            16
+        )
+        self.debug_font.pad = True
+        self.debug_font.fgcolor = (255, 255, 255)
+        self.debug_line_spacing = pygame.Vector2(
+            0, self.debug_font.get_sized_height()
+        )
+        self.debug_margin = pygame.Vector2(5, 5)
+
     def scroll(self, rel_x, rel_y):
         self.x_f -= rel_x
         self.y_f -= rel_y
@@ -34,36 +46,31 @@ class Camera:
         # TODO: Should scroll speed depend on zoom level?
 
         for c in self.cells.values():
-            c.update_screen_position(self.rect.x, self.rect.y)
+            c.update_screen_position()
 
-    def scroll_keyboard(self, direction_x, direction_y, dt):
-        if direction_x != 0 and direction_y != 0:
-            scroll_speed_times_dt = constants.WORLD_SCROLL_SPEED * dt
-            self.scroll(
-                direction_x * scroll_speed_times_dt,
-                direction_y * scroll_speed_times_dt
-            )
+    # def scroll_keyboard(self, direction_x, direction_y, dt):
+    #     if direction_x != 0 and direction_y != 0:
+    #         scroll_speed_times_dt = constants.WORLD_SCROLL_SPEED * dt
+    #         self.scroll(
+    #             direction_x * scroll_speed_times_dt,
+    #             direction_y * scroll_speed_times_dt
+    #         )
 
     def update_mouse_positions(self):
         if pygame.mouse.get_focused():
-            # FIXME: Does not work currently. Cells jump around when map is moved.
-            #  And highlight rect lags behind grid.
-
             screen_x, screen_y = pygame.mouse.get_pos()
-            world_x, world_y = self.screen_to_world_position(screen_x, screen_y)
+            world_x = screen_x + self.rect.x
+            world_y = screen_y + self.rect.y
             grid_x = world_x // self.cell_width
             grid_y = world_y // self.cell_width
             self.mouse_grid_position = (grid_x, grid_y)
-            # screen_x, screen_y = self.world_to_screen_position(grid_x * self.cell_width, grid_y * self.cell_width)
-            # self.mouse_position_snapped = (screen_x // self.cell_width * self.cell_width, screen_y // self.cell_width * self.cell_width)
-            self.mouse_position_snapped = self.world_to_screen_position(grid_x * self.cell_width, grid_y * self.cell_width)
-            # print(self.mouse_position_snapped)
+            self.mouse_position_snapped = (
+                grid_x * self.cell_width - self.rect.x,
+                grid_y * self.cell_width - self.rect.y
+            )
         else:
             self.mouse_grid_position = None
             self.mouse_position_snapped = None
-
-    def screen_to_world_position(self, screen_x, screen_y):
-        return screen_x + self.rect.x, screen_y + self.rect.y
 
     def world_to_screen_position(self, world_x, world_y):
         return world_x - self.rect.x, world_y - self.rect.y
@@ -72,17 +79,10 @@ class Camera:
         self.window.fill(constants.BACKGROUND_COLOR)
         self.draw_grid()
         self.draw_cells()
-
         if self.mouse_position_snapped is not None:
-            pygame.draw.rect(
-                self.window,
-                constants.MOUSE_HIGHLIGHT_COLOR,
-                (self.mouse_position_snapped, self.cell_size),
-                1
-            )
-
-        pygame.draw.circle(self.window, (255, 0, 0), self.world_to_screen_position(0, 0), 2)
-
+            self.draw_mouse_rect()
+        if self.show_debug_info:
+            self.draw_debug_info()
         pygame.display.flip()
 
     def draw_grid(self):
@@ -100,3 +100,24 @@ class Camera:
         for c in self.cells.values():
             if c.is_visible(self.rect_for_cell_drawing):
                 self.window.blit(c.image, (c.screen_position_x, c.screen_position_y))
+
+    def draw_mouse_rect(self):
+        pygame.draw.rect(
+            self.window,
+            constants.MOUSE_HIGHLIGHT_COLOR,
+            (self.mouse_position_snapped, self.cell_size),
+            1
+        )
+
+    def draw_debug_info(self):
+        pygame.draw.circle(self.window, (255, 0, 0), self.world_to_screen_position(0, 0), 3)
+        self.debug_font.render_to(
+            self.window,
+            self.debug_margin,
+            f"mouse grid position: {self.mouse_grid_position}"
+        )
+        self.debug_font.render_to(
+            self.window,
+            self.debug_margin + self.debug_line_spacing,
+            f"mouse position snapped: {self.mouse_position_snapped}"
+        )

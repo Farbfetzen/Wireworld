@@ -1,4 +1,5 @@
 import pygame
+import pygame.freetype
 
 from src import camera
 from src import cell
@@ -57,6 +58,8 @@ class Wireworld:
                         else:
                             for c in self.cells.values():
                                 c.remove_electricity()
+                    elif event.key == pygame.K_F1:
+                        self.camera.show_debug_info = not self.camera.show_debug_info
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:  # 1 = left click
                         self.mouse_is_pressed = True
@@ -86,10 +89,9 @@ class Wireworld:
         selected_cell = self.cells.get(self.camera.mouse_grid_position, None)
         if selected_cell is None:
             self.cells[self.camera.mouse_grid_position] = cell.Cell(
-                self.camera.mouse_grid_position,
-                self.camera.mouse_position_snapped,
+                self.camera,
                 self.cells,
-                self.camera.cell_images
+                self.cell_width
             )
         else:
             selected_cell.increment_state()

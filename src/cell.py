@@ -14,22 +14,25 @@ def create_cell_images(cell_size):
 
 
 class Cell:
-    def __init__(self, grid_pos, screen_pos, cells, images):
-        self.grid_position = grid_pos
-        self.screen_position_x_original, self.screen_position_y_original = screen_pos
-        self.screen_position_x, self.screen_position_y = screen_pos
+    def __init__(self, camera, cells, width):
+        self.camera = camera
+        self.cells = cells
+        self.width = width
+        self.grid_position = camera.mouse_grid_position
+        self.grid_x, self.grid_y = self.grid_position
+        self.screen_position_x = 0
+        self.screen_position_y = 0
+        self.update_screen_position()
         self.state = 0  # 0 = conductor, 1 = electron head, 2 = electron tail
         self.next_state = self.state
-        self.cells = cells
-        self.images = images
-        self.image = images[self.state]
+        self.images = camera.cell_images
+        self.image = self.images[self.state]
         self.neighbors = self.get_neighbors()
 
     def get_neighbors(self):
         neighbors = []
-        x, y = self.grid_position
         for dx, dy in ((-1, -1), (0, -1), (1, -1), (1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0)):
-            neighbor = self.cells.get((x + dx, y + dy), None)
+            neighbor = self.cells.get((self.grid_x + dx, self.grid_y + dy), None)
             if neighbor is not None:
                 neighbors.append(neighbor)
                 neighbor.neighbors.append(self)
@@ -54,9 +57,9 @@ class Cell:
         self.state = self.next_state
         self.image = self.images[self.state]
 
-    def update_screen_position(self, camera_x, camera_y):
-        self.screen_position_x = self.screen_position_x_original - camera_x
-        self.screen_position_y = self.screen_position_y_original - camera_y
+    def update_screen_position(self):
+        self.screen_position_x = self.grid_x * self.width - self.camera.rect.x
+        self.screen_position_y = self.grid_y * self.width - self.camera.rect.y
 
     def is_visible(self, camera_rect):
         return camera_rect.collidepoint(self.screen_position_x, self.screen_position_y)
