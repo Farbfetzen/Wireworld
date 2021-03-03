@@ -18,15 +18,7 @@ class Camera:
         self.x_f = 0.
         self.y_f = 0.
         self.rect = pygame.Rect(self.x_f, self.y_f, self.window_width, self.window_height)
-        # The rect for determining if cells are visible is a little bigger than the position rect
-        # because otherwise the cells vanish too early at the top and left edge.
-        self.rect_for_cell_drawing = pygame.Rect(
-            self.rect.x,
-            self.rect.y,
-            self.window_width + self.cell_width * 2,
-            self.window_height + self.cell_width * 2
-        )
-        self.rect_for_cell_drawing.center = self.rect.center
+        self.rect_for_cell_drawing = self.rect.copy()
 
         self.show_debug_info = False
         self.debug_font = pygame.freetype.SysFont(
@@ -97,11 +89,10 @@ class Camera:
             pygame.draw.line(self.window, constants.GRID_COLOR, (0, y), (self.window_width, y))
 
     def draw_cells(self):
-        self.n_visible_cells = 0
-        for c in self.cells.values():
-            if self.rect_for_cell_drawing.contains(c.rect):
-                self.window.blit(c.image, c.rect)
-                self.n_visible_cells += 1
+        visible_cells = self.rect_for_cell_drawing.collidedictall(self.cells, True)
+        for _, c in visible_cells:
+            self.window.blit(c.image, c.rect)
+        self.n_visible_cells = len(visible_cells)
 
     def draw_mouse_rect(self):
         pygame.draw.rect(
