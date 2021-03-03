@@ -20,8 +20,9 @@ class Cell:
         self.width = width
         self.grid_position = camera.mouse_grid_position
         self.grid_x, self.grid_y = self.grid_position
-        self.screen_position_x = 0
-        self.screen_position_y = 0
+        self.world_position_x = self.grid_x * self.width
+        self.world_position_y = self.grid_y * self.width
+        self.rect = pygame.Rect(0, 0, self.width, self.width)
         self.update_screen_position()
         self.state = 0  # 0 = conductor, 1 = electron head, 2 = electron tail
         self.next_state = self.state
@@ -58,11 +59,8 @@ class Cell:
         self.image = self.images[self.state]
 
     def update_screen_position(self):
-        self.screen_position_x = self.grid_x * self.width - self.camera.rect.x
-        self.screen_position_y = self.grid_y * self.width - self.camera.rect.y
-
-    def is_visible(self, camera_rect):
-        return camera_rect.collidepoint(self.screen_position_x, self.screen_position_y)
+        self.rect.x = self.world_position_x - self.camera.rect.x
+        self.rect.y = self.world_position_y - self.camera.rect.y
 
     def increment_state(self):
         self.state += 1

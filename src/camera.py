@@ -12,19 +12,21 @@ class Camera:
         self.cells = cells
         self.cell_width = cell_width
         self.cell_size = (cell_width, cell_width)
-        self.cell_images = cell.create_cell_images(self.cell_size)  # TODO: Resize images when zooming
-        self.mouse_grid_position = None  # highlighted cell coordinates
+        self.cell_images = cell.create_cell_images(self.cell_size)
+        self.mouse_grid_position = None
         self.mouse_position_snapped = None
         self.x_f = 0.
         self.y_f = 0.
         self.rect = pygame.Rect(self.x_f, self.y_f, self.window_width, self.window_height)
+        # The rect for determining if cells are visible is a little bigger than the position rect
+        # because otherwise the cells vanish too early at the top and left edge.
         self.rect_for_cell_drawing = pygame.Rect(
-            self.x_f,
-            self.y_f,
-            self.window_width + self.cell_width,
-            self.window_height + self.cell_width
+            self.rect.x,
+            self.rect.y,
+            self.window_width + self.cell_width * 2,
+            self.window_height + self.cell_width * 2
         )
-        self.rect_for_cell_drawing.bottomright = self.rect.bottomright
+        self.rect_for_cell_drawing.center = self.rect.center
 
         self.show_debug_info = False
         self.debug_font = pygame.freetype.SysFont(
@@ -37,24 +39,20 @@ class Camera:
             0, self.debug_font.get_sized_height()
         )
         self.debug_margin = pygame.Vector2(5, 5)
+        self.n_visible_cells = 0
 
     def scroll(self, rel_x, rel_y):
         self.x_f -= rel_x
         self.y_f -= rel_y
         self.rect.topleft = (self.x_f, self.y_f)
-        # print(self.rect.topleft)
         # TODO: Should scroll speed depend on zoom level?
 
         for c in self.cells.values():
             c.update_screen_position()
 
-    # def scroll_keyboard(self, direction_x, direction_y, dt):
-    #     if direction_x != 0 and direction_y != 0:
-    #         scroll_speed_times_dt = constants.WORLD_SCROLL_SPEED * dt
-    #         self.scroll(
-    #             direction_x * scroll_speed_times_dt,
-    #             direction_y * scroll_speed_times_dt
-    #         )
+    def scroll_keyboard(self, direction_x, direction_y, dt):
+        # TODO: Implement this. See code in project dimetric.
+        pass
 
     def zoom(self):
         # TODO: Implement this. With mouse wheel and keyboard.
@@ -63,10 +61,8 @@ class Camera:
     def update_mouse_positions(self):
         if pygame.mouse.get_focused():
             screen_x, screen_y = pygame.mouse.get_pos()
-            world_x = screen_x + self.rect.x
-            world_y = screen_y + self.rect.y
-            grid_x = world_x // self.cell_width
-            grid_y = world_y // self.cell_width
+            grid_x = (screen_x + self.rect.x) // self.cell_width
+            grid_y = (screen_y + self.rect.y) // self.cell_width
             self.mouse_grid_position = (grid_x, grid_y)
             self.mouse_position_snapped = (
                 grid_x * self.cell_width - self.rect.x,
@@ -101,9 +97,11 @@ class Camera:
             pygame.draw.line(self.window, constants.GRID_COLOR, (0, y), (self.window_width, y))
 
     def draw_cells(self):
+        self.n_visible_cells = 0
         for c in self.cells.values():
-            if c.is_visible(self.rect_for_cell_drawing):
-                self.window.blit(c.image, (c.screen_position_x, c.screen_position_y))
+            if self.rect_for_cell_drawing.contains(c.rect):
+                self.window.blit(c.image, c.rect)
+                self.n_visible_cells += 1
 
     def draw_mouse_rect(self):
         pygame.draw.rect(
@@ -124,4 +122,9 @@ class Camera:
             self.window,
             self.debug_margin + self.debug_line_spacing,
             f"mouse position snapped: {self.mouse_position_snapped}"
+        )
+        self.debug_font.render_to(
+            self.window,
+            self.debug_margin + self.debug_line_spacing * 2,
+            f"number of visible cells: {self.n_visible_cells}"
         )
