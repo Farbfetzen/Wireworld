@@ -4,16 +4,16 @@ from src import constants
 
 
 class Camera:
-    def __init__(self, window_size, cell_width, cells):
+    def __init__(self, window_size, cell_width, cell_size, cells):
         self.window_width, self.window_height = window_size
         self.window = pygame.display.set_mode(window_size)
         pygame.display.set_caption("Simulation")
         self.cells = cells
         self.cell_width = cell_width
-        self.cell_size = (cell_width, cell_width)
-        self.cell_images = self.create_cell_images(self.cell_size)
-        self.mouse_grid_position = None
-        self.mouse_screen_position_snapped = None  # snapped to the grid
+        self.cell_size = cell_size
+        self.mouse_grid_position = (0, 0)
+        self.mouse_rect = pygame.Rect(self.mouse_grid_position, cell_size)
+        self.mouse_is_in_window = pygame.mouse.get_focused()
         self.x_f = 0.
         self.y_f = 0.
         self.rect = pygame.Rect(self.x_f, self.y_f, self.window_width, self.window_height)
@@ -22,17 +22,7 @@ class Camera:
         self.show_debug_info = False
         self.n_visible_cells = 0
 
-    @staticmethod
-    def create_cell_images(cell_size):
-        conductor_image = pygame.Surface(cell_size)
-        conductor_image.fill(constants.CONDUCTOR_COLOR)
-        head_image = pygame.Surface(cell_size)
-        head_image.fill(constants.ELECTRON_HEAD_COLOR)
-        tail_image = pygame.Surface(cell_size)
-        tail_image.fill(constants.ELECTRON_TAIL_COLOR)
-        return conductor_image, head_image, tail_image
-
-    def process_event(self, event, dt):
+    def process_event(self, event):
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_F1:
                 self.show_debug_info = not self.show_debug_info
@@ -44,7 +34,6 @@ class Camera:
         self.y_f -= rel_y
         self.rect.topleft = (self.x_f, self.y_f)
         # TODO: Should scroll speed depend on zoom level?
-
         for cell in self.cells.values():
             cell.update_screen_position()
 
@@ -56,19 +45,19 @@ class Camera:
         # TODO: Implement this. With mouse wheel and keyboard.
         pass
 
-    def update_mouse_positions(self):
+    def update_mouse_position(self):
         if pygame.mouse.get_focused():
+            self.mouse_is_in_window = True
             screen_x, screen_y = pygame.mouse.get_pos()
             grid_x = (screen_x + self.rect.x) // self.cell_width
             grid_y = (screen_y + self.rect.y) // self.cell_width
             self.mouse_grid_position = (grid_x, grid_y)
-            self.mouse_screen_position_snapped = (
+            self.mouse_rect.topleft = (
                 grid_x * self.cell_width - self.rect.x,
                 grid_y * self.cell_width - self.rect.y
             )
         else:
-            self.mouse_grid_position = None
-            self.mouse_screen_position_snapped = None
+            self.mouse_is_in_window = False
 
     def world_to_screen_position(self, world_x, world_y):
         return world_x - self.rect.x, world_y - self.rect.y
@@ -77,8 +66,8 @@ class Camera:
         self.window.fill(constants.BACKGROUND_COLOR)
         self.draw_grid()
         self.draw_cells()
-        if self.mouse_screen_position_snapped is not None:
-            self.draw_mouse_rect()
+        if self.mouse_is_in_window:
+            pygame.draw.rect(self.window, constants.MOUSE_HIGHLIGHT_COLOR, self.mouse_rect, 1)
         if self.show_debug_info:
             self.draw_debug_info()
         pygame.display.flip()
@@ -100,14 +89,6 @@ class Camera:
             self.window.blit(cell.image, cell.rect)
         self.n_visible_cells = len(visible_cells)
 
-    def draw_mouse_rect(self):
-        pygame.draw.rect(
-            self.window,
-            constants.MOUSE_HIGHLIGHT_COLOR,
-            (self.mouse_screen_position_snapped, self.cell_size),
-            1
-        )
-
     def draw_debug_info(self):
         pygame.draw.circle(self.window, (255, 0, 0), self.world_to_screen_position(0, 0), 3)
         constants.DEBUG_FONT.render_to(
@@ -118,7 +99,7 @@ class Camera:
         constants.DEBUG_FONT.render_to(
             self.window,
             constants.DEBUG_MARGIN + constants.DEBUG_LINE_SPACING,
-            f"mouse position snapped: {self.mouse_screen_position_snapped}"
+            f"mouse rect screen position: {self.mouse_rect.topleft}"
         )
         constants.DEBUG_FONT.render_to(
             self.window,

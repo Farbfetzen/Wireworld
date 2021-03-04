@@ -1,7 +1,11 @@
 import pygame
 
+from src import constants
+
 
 class Cell:
+    images = ()
+
     def __init__(self, camera, cells, width):
         self.camera = camera
         self.cells = cells
@@ -14,9 +18,18 @@ class Cell:
         self.update_screen_position()
         self.state = 0  # 0 = conductor, 1 = electron head, 2 = electron tail
         self.next_state = self.state
-        self.images = camera.cell_images
-        self.image = self.images[self.state]
+        self.image = Cell.images[self.state]
         self.neighbors = self.get_neighbors()
+
+    @staticmethod
+    def create_cell_images(cell_size):
+        conductor_image = pygame.Surface(cell_size)
+        conductor_image.fill(constants.CONDUCTOR_COLOR)
+        head_image = pygame.Surface(cell_size)
+        head_image.fill(constants.ELECTRON_HEAD_COLOR)
+        tail_image = pygame.Surface(cell_size)
+        tail_image.fill(constants.ELECTRON_TAIL_COLOR)
+        Cell.images = (conductor_image, head_image, tail_image)
 
     def get_neighbors(self):
         neighbors = []
@@ -42,9 +55,9 @@ class Cell:
             # electron tail -> conductor
             self.next_state = 0
 
-    def update(self):
+    def update_state(self):
         self.state = self.next_state
-        self.image = self.images[self.state]
+        self.image = Cell.images[self.state]
 
     def update_screen_position(self):
         self.rect.x = self.world_position_x - self.camera.rect.x
@@ -55,12 +68,12 @@ class Cell:
         if self.state > 2:
             self.delete()
         else:
-            self.image = self.images[self.state]
+            self.image = Cell.images[self.state]
 
     def remove_electricity(self):
         self.state = 0
         self.next_state = 0
-        self.image = self.images[self.state]
+        self.image = Cell.images[self.state]
 
     def delete(self):
         del self.cells[self.grid_position]

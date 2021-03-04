@@ -5,7 +5,7 @@ from src.cell import Cell
 
 
 class Simulation:
-    def __init__(self, cells, camera, cell_width):
+    def __init__(self, camera, cell_width, cells):
         self.cells = cells
         self.camera = camera
         self.cell_width = cell_width
@@ -58,19 +58,18 @@ class Simulation:
                 self.step()
 
     def process_mouse_press(self):
-        if (self.camera.mouse_grid_position is None
-                or self.camera.mouse_grid_position == self.last_changed_cell_position):
-            return
-        self.last_changed_cell_position = self.camera.mouse_grid_position
-        selected_cell = self.cells.get(self.camera.mouse_grid_position, None)
-        if selected_cell is None:
-            self.cells[self.camera.mouse_grid_position] = Cell(
-                self.camera,
-                self.cells,
-                self.cell_width
-            )
-        else:
-            selected_cell.increment_state()
+        if (self.camera.mouse_is_in_window
+                and self.camera.mouse_grid_position != self.last_changed_cell_position):
+            self.last_changed_cell_position = self.camera.mouse_grid_position
+            selected_cell = self.cells.get(self.camera.mouse_grid_position, None)
+            if selected_cell is None:
+                self.cells[self.camera.mouse_grid_position] = Cell(
+                    self.camera,
+                    self.cells,
+                    self.cell_width
+                )
+            else:
+                selected_cell.increment_state()
 
     def step(self):
         # All cells must be prepared before they are all updated. Otherwise
@@ -80,4 +79,4 @@ class Simulation:
         for cell in cells:
             cell.prepare_update()
         for cell in cells:
-            cell.update()
+            cell.update_state()
