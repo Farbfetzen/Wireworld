@@ -28,15 +28,16 @@ A half adder. Left are the two inputs. Top right is the ones output and bottom r
 ### Controls
 | action | binding |
 |---|---|
-| Change cell state | Left click |
-| Move the map | Right click and drag |
-| Pause/unpause the simulation | Space |
-| Single step | Enter |
-| Increase the speed | + |
-| Decrease the speed | - |
-| Delete all electrons | Backspace |
-| Delete all wires | Ctrl + Backspace |
-| Quit | Esc |
+| change cell state | left mouse button |
+| delete cell | ctrl + left mouse button |
+| move the map | right mouse button |
+| pause/unpause the simulation | space |
+| single step | enter |
+| increase speed | + |
+| decrease speed | - |
+| delete all electrons | backspace |
+| delete all wires | ctrl + backspace |
+| quit | esc |
 
 
 ### Optional Command Line Arguments

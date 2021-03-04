@@ -62,14 +62,19 @@ class Simulation:
                 and self.camera.mouse_grid_position != self.last_changed_cell_position):
             self.last_changed_cell_position = self.camera.mouse_grid_position
             selected_cell = self.cells.get(self.camera.mouse_grid_position, None)
+            erase_mode = pygame.key.get_mods() & pygame.KMOD_CTRL
             if selected_cell is None:
-                self.cells[self.camera.mouse_grid_position] = Cell(
-                    self.camera,
-                    self.cells,
-                    self.cell_width
-                )
+                if not erase_mode:
+                    self.cells[self.camera.mouse_grid_position] = Cell(
+                        self.camera,
+                        self.cells,
+                        self.cell_width
+                    )
             else:
-                selected_cell.increment_state()
+                if erase_mode:
+                    selected_cell.delete()
+                else:
+                    selected_cell.increment_state()
 
     def step(self):
         # All cells must be prepared before they are all updated. Otherwise
