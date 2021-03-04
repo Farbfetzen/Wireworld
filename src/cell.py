@@ -5,24 +5,12 @@ from src import constants
 
 class Cell:
     images = ()
-
-    def __init__(self, camera, cells, width):
-        self.camera = camera
-        self.cells = cells
-        self.width = width
-        self.grid_position = camera.mouse_grid_position
-        self.grid_x, self.grid_y = self.grid_position
-        self.world_position_x = self.grid_x * self.width
-        self.world_position_y = self.grid_y * self.width
-        self.rect = pygame.Rect(0, 0, self.width, self.width)
-        self.update_screen_position()
-        self.state = 0  # 0 = conductor, 1 = electron head, 2 = electron tail
-        self.next_state = self.state
-        self.image = Cell.images[self.state]
-        self.neighbors = self.get_neighbors()
+    width = constants.DEFAULT_CELL_WIDTH
+    camera = None
+    cells = {}
 
     @staticmethod
-    def create_cell_images(cell_size):
+    def init_class_variables(cell_width, cell_size, camera, cells):
         conductor_image = pygame.Surface(cell_size)
         conductor_image.fill(constants.CONDUCTOR_COLOR)
         head_image = pygame.Surface(cell_size)
@@ -30,11 +18,26 @@ class Cell:
         tail_image = pygame.Surface(cell_size)
         tail_image.fill(constants.ELECTRON_TAIL_COLOR)
         Cell.images = (conductor_image, head_image, tail_image)
+        Cell.width = cell_width
+        Cell.camera = camera
+        Cell.cells = cells
+
+    def __init__(self):
+        self.grid_position = Cell.camera.mouse_grid_position
+        self.grid_x, self.grid_y = self.grid_position
+        self.world_position_x = self.grid_x * Cell.width
+        self.world_position_y = self.grid_y * Cell.width
+        self.rect = pygame.Rect(0, 0, Cell.width, Cell.width)
+        self.update_screen_position()
+        self.state = 0  # 0 = conductor, 1 = electron head, 2 = electron tail
+        self.next_state = self.state
+        self.image = Cell.images[self.state]
+        self.neighbors = self.get_neighbors()
 
     def get_neighbors(self):
         neighbors = []
         for dx, dy in ((-1, -1), (0, -1), (1, -1), (1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0)):
-            neighbor = self.cells.get((self.grid_x + dx, self.grid_y + dy), None)
+            neighbor = Cell.cells.get((self.grid_x + dx, self.grid_y + dy), None)
             if neighbor is not None:
                 neighbors.append(neighbor)
                 neighbor.neighbors.append(self)
@@ -60,8 +63,8 @@ class Cell:
         self.image = Cell.images[self.state]
 
     def update_screen_position(self):
-        self.rect.x = self.world_position_x - self.camera.rect.x
-        self.rect.y = self.world_position_y - self.camera.rect.y
+        self.rect.x = self.world_position_x - Cell.camera.rect.x
+        self.rect.y = self.world_position_y - Cell.camera.rect.y
 
     def increment_state(self):
         self.state += 1
@@ -76,6 +79,6 @@ class Cell:
         self.image = Cell.images[self.state]
 
     def delete(self):
-        del self.cells[self.grid_position]
+        del Cell.cells[self.grid_position]
         for neighbor in self.neighbors:
             neighbor.neighbors.remove(self)
