@@ -1,5 +1,4 @@
-import pygame
-
+import pygame.freetype
 
 FPS = 60
 SPS = 4  # steps per second
@@ -17,3 +16,15 @@ ELECTRON_HEAD_COLOR = pygame.Color(0, 64, 255)
 ELECTRON_TAIL_COLOR = pygame.Color(255, 64, 0)
 
 WORLD_SCROLL_SPEED = 1  # pixels per milliecond
+
+pygame.freetype.init()
+DEBUG_FONT = pygame.freetype.SysFont(
+    "consolas, inconsolate, monospace",
+    16
+)
+DEBUG_FONT.pad = True
+DEBUG_FONT.fgcolor = (255, 255, 255)
+DEBUG_LINE_SPACING = pygame.Vector2(
+    0, DEBUG_FONT.get_sized_height()
+)
+DEBUG_MARGIN = pygame.Vector2(5, 5)

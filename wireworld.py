@@ -2,8 +2,8 @@ import argparse
 import os
 os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "1"
 
-from src import simulation
 from src import constants
+from src import run
 
 
 parser = argparse.ArgumentParser()
@@ -25,5 +25,4 @@ parser.add_argument(
     default=constants.DEFAULT_CELL_WIDTH
 )
 args = parser.parse_args()
-
-simulation.Wireworld(args.window_size, args.cell_width).run()
+run.run(args.window_size, args.cell_width)

@@ -1,17 +1,5 @@
 import pygame
 
-from src import constants
-
-
-def create_cell_images(cell_size):
-    conductor_image = pygame.Surface(cell_size)
-    conductor_image.fill(constants.CONDUCTOR_COLOR)
-    head_image = pygame.Surface(cell_size)
-    head_image.fill(constants.ELECTRON_HEAD_COLOR)
-    tail_image = pygame.Surface(cell_size)
-    tail_image.fill(constants.ELECTRON_TAIL_COLOR)
-    return conductor_image, head_image, tail_image
-
 
 class Cell:
     def __init__(self, camera, cells, width):
