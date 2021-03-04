@@ -26,15 +26,17 @@ A half adder. Left are the two inputs. Top right is the ones output and bottom r
 ![half_adder](screenshot_half_adder.png)
 
 ### Controls
-- **Left click**: Change cell state.
-- **Right click and drag**: Move the map.
-- **Space**: Pause/unpause the simulation.
-- **S**: Single step.
-- **+**: Increase the speed.
-- **-**: Decrease the speed.
-- **Backspace**: Delete all electrons.
-- **Ctrl + Backspace**: Delete all wires.
-- **ESC**: Quit.
+| action | binding |
+|---|---|
+| Change cell state | Left click |
+| Move the map | Right click and drag |
+| Pause/unpause the simulation | Space |
+| Single step | Enter |
+| Increase the speed | + |
+| Decrease the speed | - |
+| Delete all electrons | Backspace |
+| Delete all wires | Ctrl + Backspace |
+| Quit | Esc |
 
 
 ### Optional Command Line Arguments
