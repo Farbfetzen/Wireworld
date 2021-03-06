@@ -11,7 +11,7 @@ class Camera:
         self.cells = cells
         self.cell_width = cell_width
         self.cell_size = cell_size
-        self.mouse_grid_position = (0, 0)
+        self.mouse_grid_position = (0, 0)  # no Vector2 because I want integers
         self.mouse_rect = pygame.Rect(self.mouse_grid_position, cell_size)
         self.mouse_screen_position = pygame.Vector2()
         self.position = pygame.Vector2()
@@ -21,15 +21,11 @@ class Camera:
         self.keyboard_scroll_speed = pygame.Vector2(constants.KEYBOARD_SCROLL_SPEED)
         self.mouse_movement_rel = pygame.Vector2()
         self.scroll_amount = pygame.Vector2()
-
-        self.show_debug_info = False
         self.n_visible_cells = 0
 
     def process_event(self, event):
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_F1:
-                self.show_debug_info = not self.show_debug_info
-            elif event.key == pygame.K_w:
+            if event.key == pygame.K_w:
                 self.keyboard_scoll_direction.y += 1
             elif event.key == pygame.K_a:
                 self.keyboard_scoll_direction.x += 1
@@ -78,21 +74,25 @@ class Camera:
         pass
 
     def update_mouse_position(self):
-        self.mouse_screen_position.update(pygame.mouse.get_pos())
-        grid_position = (self.mouse_screen_position + self.rect.topleft) // self.cell_width
-        self.mouse_grid_position = tuple(grid_position)
-        self.mouse_rect.topleft = (grid_position * self.cell_width - self.rect.topleft)
+        screen_x, screen_y = pygame.mouse.get_pos()
+        grid_x = (screen_x + self.rect.x) // self.cell_width
+        grid_y = (screen_y + self.rect.y) // self.cell_width
+        self.mouse_grid_position = (grid_x, grid_y)
+        self.mouse_rect.topleft = (
+            grid_x * self.cell_width - self.rect.x,
+            grid_y * self.cell_width - self.rect.y
+        )
 
     def world_to_screen_position(self, world_x, world_y):
         return world_x - self.rect.x, world_y - self.rect.y
 
-    def draw(self):
+    def draw(self, debug_mode, fps):
         self.window.fill(constants.BACKGROUND_COLOR)
         self.draw_grid()
         self.draw_cells()
         pygame.draw.rect(self.window, constants.MOUSE_HIGHLIGHT_COLOR, self.mouse_rect, 1)
-        if self.show_debug_info:
-            self.draw_debug_info()
+        if debug_mode:
+            self.draw_debug_info(fps)
         pygame.display.flip()
 
     def draw_grid(self):
@@ -112,20 +112,25 @@ class Camera:
             self.window.blit(cell.image, cell.rect)
         self.n_visible_cells = len(visible_cells)
 
-    def draw_debug_info(self):
+    def draw_debug_info(self, fps):
         pygame.draw.circle(self.window, (255, 0, 0), self.world_to_screen_position(0, 0), 3)
         constants.DEBUG_FONT.render_to(
             self.window,
             constants.DEBUG_MARGIN,
-            f"mouse grid position: {self.mouse_grid_position}"
+            f"fps: {fps:.0f}"
         )
         constants.DEBUG_FONT.render_to(
             self.window,
             constants.DEBUG_MARGIN + constants.DEBUG_LINE_SPACING,
-            f"mouse rect screen position: {self.mouse_rect.topleft}"
+            f"mouse grid position: {self.mouse_grid_position}"
         )
         constants.DEBUG_FONT.render_to(
             self.window,
             constants.DEBUG_MARGIN + constants.DEBUG_LINE_SPACING * 2,
+            f"mouse rect screen position: {self.mouse_rect.topleft}"
+        )
+        constants.DEBUG_FONT.render_to(
+            self.window,
+            constants.DEBUG_MARGIN + constants.DEBUG_LINE_SPACING * 3,
             f"number of visible cells: {self.n_visible_cells}"
         )

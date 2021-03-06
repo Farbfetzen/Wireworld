@@ -15,15 +15,20 @@ def run(window_size, cell_width):
     simulation = Simulation(camera, cell_width, cells)
     clock = pygame.time.Clock()
     fps = constants.FPS
+    debug_mode = False
 
     while True:
         dt = clock.tick(fps) / 1000
         for event in pygame.event.get():
-            if (event.type == pygame.QUIT
-                    or event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+            if event.type == pygame.QUIT:
                 return
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    return
+                elif event.key == pygame.K_F1:
+                    debug_mode = not debug_mode
             camera.process_event(event)
             simulation.process_event(event)
         camera.update(dt)
         simulation.update(dt)
-        camera.draw()
+        camera.draw(debug_mode, clock.get_fps())
