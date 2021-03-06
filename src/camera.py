@@ -20,6 +20,8 @@ class Camera:
         self.rect_for_cell_drawing = self.rect.copy()
         self.keyboard_scoll_direction = pygame.Vector2()
         self.keyboard_scroll_speed = pygame.Vector2(constants.KEYBOARD_SCROLL_SPEED)
+        self.mouse_movement_rel = pygame.Vector2()
+        self.scroll_amount = pygame.Vector2()
 
         self.show_debug_info = False
         self.n_visible_cells = 0
@@ -46,22 +48,29 @@ class Camera:
             elif event.key == pygame.K_d:
                 self.keyboard_scoll_direction.x += 1
         elif event.type == pygame.MOUSEMOTION and event.buttons[2]:  # 2 = right mouse button
-            self.scroll(event.rel)
+            self.mouse_movement_rel += event.rel
+        elif event.type == pygame.MOUSEWHEEL:
+            print(event)
+            # TODO: Collect all wheel events of a frame before performing the zoom in update().
 
     def update(self, dt):
-        if self.keyboard_scoll_direction != (0, 0):
-            self.scroll(
-                self.keyboard_scoll_direction.elementwise()
-                * self.keyboard_scroll_speed
-                * dt
-            )
+        # I collect all scrolling and zooming events before updating the camera
+        # because there often are multiple such events per frame.
+        self.scroll(
+            self.mouse_movement_rel
+            + self.keyboard_scoll_direction.elementwise()
+            * self.keyboard_scroll_speed
+            * dt
+        )
 
     def scroll(self, rel):
-        self.position -= rel
-        self.rect.topleft = self.position
-        # TODO: Should scroll speed depend on zoom level?
-        for cell in self.cells.values():
-            cell.update_screen_position()
+        if rel != (0, 0):
+            self.position -= rel
+            self.rect.topleft = self.position
+            # TODO: Should scroll speed depend on zoom level?
+            for cell in self.cells.values():
+                cell.update_screen_position()
+            self.mouse_movement_rel.update(0, 0)
 
     def zoom(self):
         # TODO: Implement this. With mouse wheel and keyboard.
