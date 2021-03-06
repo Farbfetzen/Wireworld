@@ -14,6 +14,7 @@ class Camera:
         self.mouse_grid_position = (0, 0)
         self.mouse_rect = pygame.Rect(self.mouse_grid_position, cell_size)
         self.mouse_is_in_window = pygame.mouse.get_focused()
+        self.mouse_screen_position = pygame.Vector2()
         self.position = pygame.Vector2()
         self.rect = self.window.get_rect()
         self.rect_for_cell_drawing = self.rect.copy()
@@ -69,14 +70,10 @@ class Camera:
     def update_mouse_position(self):
         if pygame.mouse.get_focused():
             self.mouse_is_in_window = True
-            screen_x, screen_y = pygame.mouse.get_pos()
-            grid_x = (screen_x + self.rect.x) // self.cell_width
-            grid_y = (screen_y + self.rect.y) // self.cell_width
-            self.mouse_grid_position = (grid_x, grid_y)
-            self.mouse_rect.topleft = (
-                grid_x * self.cell_width - self.rect.x,
-                grid_y * self.cell_width - self.rect.y
-            )
+            self.mouse_screen_position.update(pygame.mouse.get_pos())
+            grid_position = (self.mouse_screen_position + self.rect.topleft) // self.cell_width
+            self.mouse_grid_position = tuple(grid_position)
+            self.mouse_rect.topleft = (grid_position * self.cell_width - self.rect.topleft)
         else:
             self.mouse_is_in_window = False
 

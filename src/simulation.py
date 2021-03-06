@@ -16,14 +16,14 @@ class Simulation:
         self.time_per_step = 1 / self.sps
         self.time_since_last_step = 0
 
-    def process_event(self, event, dt):
+    def process_event(self, event):
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
                 if self.simulation_is_running:
                     self.simulation_is_running = False
                 else:
                     self.simulation_is_running = True
-                    self.time_since_last_step = self.time_per_step - dt
+                    self.time_since_last_step = self.time_per_step
             elif event.key in (pygame.K_PLUS, pygame.K_KP_PLUS):
                 self.sps = min(self.sps * 2, constants.SPS_MAX)
                 self.time_per_step = 1 / self.sps
