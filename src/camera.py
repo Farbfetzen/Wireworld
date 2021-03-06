@@ -14,10 +14,11 @@ class Camera:
         self.mouse_grid_position = (0, 0)
         self.mouse_rect = pygame.Rect(self.mouse_grid_position, cell_size)
         self.mouse_is_in_window = pygame.mouse.get_focused()
-        self.x_f = 0.
-        self.y_f = 0.
-        self.rect = pygame.Rect(self.x_f, self.y_f, self.window_width, self.window_height)
+        self.position = pygame.Vector2()
+        self.rect = self.window.get_rect()
         self.rect_for_cell_drawing = self.rect.copy()
+        self.keyboard_scoll_direction = pygame.Vector2()
+        self.keyboard_scroll_speed = pygame.Vector2(constants.KEYBOARD_SCROLL_SPEED)
 
         self.show_debug_info = False
         self.n_visible_cells = 0
@@ -26,20 +27,40 @@ class Camera:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_F1:
                 self.show_debug_info = not self.show_debug_info
+            elif event.key == pygame.K_w:
+                self.keyboard_scoll_direction.y += 1
+            elif event.key == pygame.K_a:
+                self.keyboard_scoll_direction.x += 1
+            elif event.key == pygame.K_s:
+                self.keyboard_scoll_direction.y -= 1
+            elif event.key == pygame.K_d:
+                self.keyboard_scoll_direction.x -= 1
+        elif event.type == pygame.KEYUP:
+            if event.key == pygame.K_w:
+                self.keyboard_scoll_direction.y -= 1
+            elif event.key == pygame.K_a:
+                self.keyboard_scoll_direction.x -= 1
+            elif event.key == pygame.K_s:
+                self.keyboard_scoll_direction.y += 1
+            elif event.key == pygame.K_d:
+                self.keyboard_scoll_direction.x += 1
         elif event.type == pygame.MOUSEMOTION and event.buttons[2]:  # 2 = right mouse button
-            self.scroll(*event.rel)
+            self.scroll(event.rel)
 
-    def scroll(self, rel_x, rel_y):
-        self.x_f -= rel_x
-        self.y_f -= rel_y
-        self.rect.topleft = (self.x_f, self.y_f)
+    def update(self, dt):
+        if self.keyboard_scoll_direction != (0, 0):
+            self.scroll(
+                self.keyboard_scoll_direction.elementwise()
+                * self.keyboard_scroll_speed
+                * dt
+            )
+
+    def scroll(self, rel):
+        self.position -= rel
+        self.rect.topleft = self.position
         # TODO: Should scroll speed depend on zoom level?
         for cell in self.cells.values():
             cell.update_screen_position()
-
-    def scroll_keyboard(self, direction_x, direction_y, dt):
-        # TODO: Implement this. See code in project dimetric.
-        pass
 
     def zoom(self):
         # TODO: Implement this. With mouse wheel and keyboard.

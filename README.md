@@ -30,7 +30,7 @@ A half adder. Left are the two inputs. Top right is the ones output and bottom r
 |---|---|
 | change cell state | left mouse button |
 | delete cell | ctrl + left mouse button |
-| move the map | right mouse button |
+| move the map | right mouse button or W A S D|
 | pause/unpause the simulation | space |
 | single step | enter |
 | increase speed | + |

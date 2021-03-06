@@ -13,7 +13,7 @@ class Simulation:
         self.last_changed_cell_position = None
         self.sps = constants.SPS
         self.simulation_is_running = False
-        self.time_per_step = 1000 / self.sps
+        self.time_per_step = 1 / self.sps
         self.time_since_last_step = 0
 
     def process_event(self, event, dt):
@@ -26,10 +26,10 @@ class Simulation:
                     self.time_since_last_step = self.time_per_step - dt
             elif event.key in (pygame.K_PLUS, pygame.K_KP_PLUS):
                 self.sps = min(self.sps * 2, constants.SPS_MAX)
-                self.time_per_step = 1000 / self.sps
+                self.time_per_step = 1 / self.sps
             elif event.key in (pygame.K_MINUS, pygame.K_KP_MINUS):
                 self.sps = max(self.sps / 2, constants.SPS_MIN)
-                self.time_per_step = 1000 / self.sps
+                self.time_per_step = 1 / self.sps
             elif event.key in (pygame.K_RETURN, pygame.K_KP_ENTER):
                 if self.simulation_is_running:
                     self.simulation_is_running = False

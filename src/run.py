@@ -14,10 +14,11 @@ def run(window_size, cell_width):
     Cell.init_class_variables(cell_width, cell_size, camera, cells)
     simulation = Simulation(camera, cell_width, cells)
     clock = pygame.time.Clock()
+    fps = constants.FPS
 
     while True:
-        dt = clock.tick(constants.FPS)
-        camera.update_mouse_position()
+        dt = clock.tick(fps) / 1000
+        camera.update_mouse_position()  # FIXME: Dies not have to be here? Can be in camera.update()?
         for event in pygame.event.get():
             if (event.type == pygame.QUIT
                     or event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
@@ -25,4 +26,5 @@ def run(window_size, cell_width):
             simulation.process_event(event, dt)
             camera.process_event(event)
         simulation.update(dt)
+        camera.update(dt)
         camera.draw()
