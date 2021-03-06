@@ -13,7 +13,6 @@ class Camera:
         self.cell_size = cell_size
         self.mouse_grid_position = (0, 0)
         self.mouse_rect = pygame.Rect(self.mouse_grid_position, cell_size)
-        self.mouse_is_in_window = pygame.mouse.get_focused()
         self.mouse_screen_position = pygame.Vector2()
         self.position = pygame.Vector2()
         self.rect = self.window.get_rect()
@@ -63,6 +62,8 @@ class Camera:
             * dt
         )
 
+        self.update_mouse_position()
+
     def scroll(self, rel):
         if rel != (0, 0):
             self.position -= rel
@@ -77,14 +78,10 @@ class Camera:
         pass
 
     def update_mouse_position(self):
-        if pygame.mouse.get_focused():
-            self.mouse_is_in_window = True
-            self.mouse_screen_position.update(pygame.mouse.get_pos())
-            grid_position = (self.mouse_screen_position + self.rect.topleft) // self.cell_width
-            self.mouse_grid_position = tuple(grid_position)
-            self.mouse_rect.topleft = (grid_position * self.cell_width - self.rect.topleft)
-        else:
-            self.mouse_is_in_window = False
+        self.mouse_screen_position.update(pygame.mouse.get_pos())
+        grid_position = (self.mouse_screen_position + self.rect.topleft) // self.cell_width
+        self.mouse_grid_position = tuple(grid_position)
+        self.mouse_rect.topleft = (grid_position * self.cell_width - self.rect.topleft)
 
     def world_to_screen_position(self, world_x, world_y):
         return world_x - self.rect.x, world_y - self.rect.y
@@ -93,8 +90,7 @@ class Camera:
         self.window.fill(constants.BACKGROUND_COLOR)
         self.draw_grid()
         self.draw_cells()
-        if self.mouse_is_in_window:
-            pygame.draw.rect(self.window, constants.MOUSE_HIGHLIGHT_COLOR, self.mouse_rect, 1)
+        pygame.draw.rect(self.window, constants.MOUSE_HIGHLIGHT_COLOR, self.mouse_rect, 1)
         if self.show_debug_info:
             self.draw_debug_info()
         pygame.display.flip()

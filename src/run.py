@@ -18,13 +18,12 @@ def run(window_size, cell_width):
 
     while True:
         dt = clock.tick(fps) / 1000
-        camera.update_mouse_position()
         for event in pygame.event.get():
             if (event.type == pygame.QUIT
                     or event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                 return
-            simulation.process_event(event)
             camera.process_event(event)
-        simulation.update(dt)
+            simulation.process_event(event)
         camera.update(dt)
+        simulation.update(dt)
         camera.draw()

@@ -58,8 +58,7 @@ class Simulation:
                 self.step()
 
     def process_mouse_press(self):
-        if (self.camera.mouse_is_in_window
-                and self.camera.mouse_grid_position != self.last_changed_cell_position):
+        if self.camera.mouse_grid_position != self.last_changed_cell_position:
             self.last_changed_cell_position = self.camera.mouse_grid_position
             selected_cell = self.cells.get(self.camera.mouse_grid_position, None)
             erase_mode = pygame.key.get_mods() & pygame.KMOD_CTRL
