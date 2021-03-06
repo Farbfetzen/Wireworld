@@ -14,11 +14,10 @@ def run(window_size, cell_width):
     Cell.init_class_variables(cell_width, cell_size, camera, cells)
     simulation = Simulation(camera, cell_width, cells)
     clock = pygame.time.Clock()
-    fps = constants.FPS
     debug_mode = False
 
     while True:
-        dt = clock.tick(fps) / 1000
+        dt = clock.tick(constants.FPS) / 1000
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return

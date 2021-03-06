@@ -17,52 +17,50 @@ class Camera:
         self.position = pygame.Vector2()
         self.rect = self.window.get_rect()
         self.rect_for_cell_drawing = self.rect.copy()
-        self.keyboard_movel_direction = pygame.Vector2()
-        self.keyboard_move_speed = pygame.Vector2(constants.CAMERA_MOVE_SPEED_KEYBOARD)
+        self.keyboard_move_direction = pygame.Vector2()
         self.mouse_movement_rel = pygame.Vector2()
-        self.zooml_amount = 0
+        self.zoom_amount = 0
         self.n_visible_cells = 0
 
     def process_event(self, event):
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_w:
-                self.keyboard_movel_direction.y += 1
+                self.keyboard_move_direction.y += 1
             elif event.key == pygame.K_a:
-                self.keyboard_movel_direction.x += 1
+                self.keyboard_move_direction.x += 1
             elif event.key == pygame.K_s:
-                self.keyboard_movel_direction.y -= 1
+                self.keyboard_move_direction.y -= 1
             elif event.key == pygame.K_d:
-                self.keyboard_movel_direction.x -= 1
+                self.keyboard_move_direction.x -= 1
         elif event.type == pygame.KEYUP:
             if event.key == pygame.K_w:
-                self.keyboard_movel_direction.y -= 1
+                self.keyboard_move_direction.y -= 1
             elif event.key == pygame.K_a:
-                self.keyboard_movel_direction.x -= 1
+                self.keyboard_move_direction.x -= 1
             elif event.key == pygame.K_s:
-                self.keyboard_movel_direction.y += 1
+                self.keyboard_move_direction.y += 1
             elif event.key == pygame.K_d:
-                self.keyboard_movel_direction.x += 1
+                self.keyboard_move_direction.x += 1
         elif event.type == pygame.MOUSEMOTION and event.buttons[2]:  # 2 = right mouse button
             self.mouse_movement_rel += event.rel
         elif event.type == pygame.MOUSEWHEEL:
-            print(event)
-            # TODO: Collect all wheel events of a frame before performing the zoom in update().
+            self.zoom_amount += event.y
 
     def update(self, dt):
         # I collect all move and zoom events before updating the camera
         # because there often are multiple such events per frame.
-        self.move(
-            self.mouse_movement_rel
-            + self.keyboard_movel_direction.elementwise()
-            * self.keyboard_move_speed
-            * dt
-        )
+        self.move(dt)
+        self.zoom()
 
-        self.update_mouse_position()
+        self.update_mouse_position()  # must be done AFTER moving and zooming the camera!
 
-    def move(self, rel):
-        if rel != (0, 0):
-            self.position -= rel
+    def move(self, dt):
+        distance = (self.mouse_movement_rel
+                    + self.keyboard_move_direction
+                    * constants.CAMERA_MOVE_SPEED_KEYBOARD
+                    * dt)
+        if distance != (0, 0):
+            self.position -= distance
             self.rect.topleft = self.position
             # TODO: Should move speed depend on zoom level?
             for cell in self.cells.values():
@@ -70,8 +68,10 @@ class Camera:
             self.mouse_movement_rel.update(0, 0)
 
     def zoom(self):
-        # TODO: Implement this. With mouse wheel and keyboard.
-        pass
+        if self.zoom_amount != 0:
+            print(self.zoom_amount)
+            # TODO: Implement this. With mouse wheel and keyboard.
+            self.zoom_amount = 0
 
     def update_mouse_position(self):
         screen_x, screen_y = pygame.mouse.get_pos()
