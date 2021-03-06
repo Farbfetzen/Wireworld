@@ -7,7 +7,7 @@ class Camera:
     def __init__(self, window_size, cell_width, cell_size, cells):
         self.window_width, self.window_height = window_size
         self.window = pygame.display.set_mode(window_size)
-        pygame.display.set_caption("Simulation")
+        pygame.display.set_caption("Wireworld")
         self.cells = cells
         self.cell_width = cell_width
         self.cell_size = cell_size
