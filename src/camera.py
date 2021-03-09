@@ -14,12 +14,12 @@ class Camera:
         self.mouse_grid_position = (0, 0)  # no Vector2 because I want integers
         self.mouse_rect = pygame.Rect(self.mouse_grid_position, cell_size)
         self.mouse_screen_position = pygame.Vector2()
-        self.position = pygame.Vector2()
         self.zoom_level_current = 1
         self.zoom_level_new = self.zoom_level_current
         self.window_size = self.window.get_size()
         self.surface_rect = self.window.get_rect()
         self.surface = pygame.Surface(self.surface_rect.size)
+        self.position = pygame.Vector2(self.surface_rect.center)
         self.keyboard_move_direction = pygame.Vector2()
         self.mouse_movement_rel = pygame.Vector2()
         self.n_visible_cells = 0
@@ -67,13 +67,17 @@ class Camera:
                     * dt)
         if distance != (0, 0):
             self.position -= distance
-            self.surface_rect.topleft = self.position
+            self.surface_rect.center = self.position
             # TODO: Should move speed depend on zoom level?
             for cell in self.cells.values():
                 cell.update_screen_position()
             self.mouse_movement_rel.update(0, 0)
 
     def zoom(self):
+
+        # FIXME: This is buggy at the moment.
+        # For example the red dot at 0, 0 should always be at a grid intersection.
+
         self.zoom_level_new = max(min(self.zoom_level_new, CAMERA_ZOOM_MAX), CAMERA_ZOOM_MIN)
         if self.zoom_level_new != self.zoom_level_current:
             diff = self.zoom_level_new - self.zoom_level_current
