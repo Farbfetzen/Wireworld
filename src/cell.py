@@ -63,8 +63,8 @@ class Cell:
         self.image = Cell.images[self.state]
 
     def update_screen_position(self):
-        self.rect.x = self.world_position_x - Cell.camera.rect.x
-        self.rect.y = self.world_position_y - Cell.camera.rect.y
+        self.rect.x = self.world_position_x - Cell.camera.surface_rect.x
+        self.rect.y = self.world_position_y - Cell.camera.surface_rect.y
 
     def increment_state(self):
         self.state += 1

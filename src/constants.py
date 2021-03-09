@@ -10,7 +10,7 @@ DEEFAULT_WINDOW_SIZE = (1001, 801)  # +1 so that the rightmost and bottommost gr
 DEFAULT_CELL_WIDTH = 20
 
 CAMERA_MOVE_SPEED_KEYBOARD = 750
-CAMERA_ZOOM_STEP = 0.05  # % change per zoom step relative to window rect size
+CAMERA_ZOOM_STEP = 0.05  # % change per zoom step relative to window window_rect size
 CAMERA_ZOOM_MIN = 0.5
 CAMERA_ZOOM_MAX = 2
 
