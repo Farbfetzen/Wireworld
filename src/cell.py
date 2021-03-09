@@ -1,22 +1,22 @@
 import pygame
 
-from src import constants
+from src.constants import *
 
 
 class Cell:
     images = ()
-    width = constants.DEFAULT_CELL_WIDTH
+    width = DEFAULT_CELL_WIDTH
     camera = None
     cells = {}
 
     @staticmethod
     def init_class_variables(cell_width, cell_size, camera, cells):
         conductor_image = pygame.Surface(cell_size)
-        conductor_image.fill(constants.CONDUCTOR_COLOR)
+        conductor_image.fill(CONDUCTOR_COLOR)
         head_image = pygame.Surface(cell_size)
-        head_image.fill(constants.ELECTRON_HEAD_COLOR)
+        head_image.fill(ELECTRON_HEAD_COLOR)
         tail_image = pygame.Surface(cell_size)
-        tail_image.fill(constants.ELECTRON_TAIL_COLOR)
+        tail_image.fill(ELECTRON_TAIL_COLOR)
         Cell.images = (conductor_image, head_image, tail_image)
         Cell.width = cell_width
         Cell.camera = camera

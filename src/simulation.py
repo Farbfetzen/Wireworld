@@ -1,6 +1,6 @@
 import pygame
 
-from src import constants
+from src.constants import *
 from src.cell import Cell
 
 
@@ -11,7 +11,7 @@ class Simulation:
         self.cell_width = cell_width
         self.mouse_is_pressed = False
         self.last_changed_cell_position = None
-        self.sps = constants.SPS
+        self.sps = SPS
         self.simulation_is_running = False
         self.time_per_step = 1 / self.sps
         self.time_since_last_step = 0
@@ -25,10 +25,10 @@ class Simulation:
                     self.simulation_is_running = True
                     self.time_since_last_step = self.time_per_step
             elif event.key in (pygame.K_PLUS, pygame.K_KP_PLUS):
-                self.sps = min(self.sps * 2, constants.SPS_MAX)
+                self.sps = min(self.sps * 2, SPS_MAX)
                 self.time_per_step = 1 / self.sps
             elif event.key in (pygame.K_MINUS, pygame.K_KP_MINUS):
-                self.sps = max(self.sps / 2, constants.SPS_MIN)
+                self.sps = max(self.sps / 2, SPS_MIN)
                 self.time_per_step = 1 / self.sps
             elif event.key in (pygame.K_RETURN, pygame.K_KP_ENTER):
                 if self.simulation_is_running:

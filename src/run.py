@@ -1,6 +1,6 @@
 import pygame
 
-from src import constants
+from src.constants import *
 from src.simulation import Simulation
 from src.camera import Camera
 from src.cell import Cell
@@ -17,7 +17,7 @@ def run(window_size, cell_width):
     debug_mode = False
 
     while True:
-        dt = clock.tick(constants.FPS) / 1000
+        dt = clock.tick(FPS) / 1000
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return
