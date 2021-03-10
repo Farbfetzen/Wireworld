@@ -21,7 +21,7 @@ class Camera:
         self.keyboard_move_amount = pygame.Vector2()
         self.mouse_movement_rel = pygame.Vector2()
         self.camera_has_changed = False
-        self.n_visible_cells = 0
+        self.n_visible_cells = 0  # for debugging
 
     def process_event(self, event):
         if event.type == pygame.KEYDOWN:
@@ -111,15 +111,12 @@ class Camera:
             grid_y * CELL_WIDTH - self.surface_rect.y
         )
 
-    def draw(self, debug_mode, fps):
+    def draw(self):
         self.surface.fill(BACKGROUND_COLOR)
         self.draw_grid()
         self.draw_cells()
         pygame.draw.rect(self.surface, MOUSE_HIGHLIGHT_COLOR, self.mouse_rect, 1)
         pygame.transform.smoothscale(self.surface, self.window_size, self.window)
-        if debug_mode:
-            self.draw_debug_info(fps)
-        pygame.display.flip()
 
     def draw_grid(self):
         for x in range(CELL_WIDTH - (self.surface_rect.x % CELL_WIDTH),
@@ -137,31 +134,3 @@ class Camera:
         for _, cell in visible_cells:
             self.surface.blit(cell.image, cell.screen_position)
         self.n_visible_cells = len(visible_cells)
-
-    def draw_debug_info(self, fps):
-        pygame.draw.circle(self.window, (255, 0, 0), self.world_to_screen_position(0, 0), 3)
-        DEBUG_FONT.render_to(
-            self.window,
-            DEBUG_MARGIN,
-            f"fps: {fps:.0f}"
-        )
-        DEBUG_FONT.render_to(
-            self.window,
-            DEBUG_MARGIN + DEBUG_LINE_SPACING,
-            f"mouse grid position: {self.mouse_grid_position}"
-        )
-        DEBUG_FONT.render_to(
-            self.window,
-            DEBUG_MARGIN + DEBUG_LINE_SPACING * 2,
-            f"mouse rect screen position: {self.mouse_rect.topleft}"
-        )
-        DEBUG_FONT.render_to(
-            self.window,
-            DEBUG_MARGIN + DEBUG_LINE_SPACING * 3,
-            f"number of visible cells: {self.n_visible_cells}"
-        )
-        DEBUG_FONT.render_to(
-            self.window,
-            DEBUG_MARGIN + DEBUG_LINE_SPACING * 4,
-            f"zoom level: {self.zoom_level:.2f}"
-        )
