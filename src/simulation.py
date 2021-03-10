@@ -23,16 +23,18 @@ class Simulation:
                 else:
                     self.simulation_is_running = True
                     self.time_since_last_step = self.time_per_step
-            elif event.key in (pygame.K_PLUS, pygame.K_KP_PLUS):
-                self.sps = min(self.sps * 2, SPS_MAX)
-                self.time_per_step = 1 / self.sps
-            elif event.key in (pygame.K_MINUS, pygame.K_KP_MINUS):
-                self.sps = max(self.sps / 2, SPS_MIN)
-                self.time_per_step = 1 / self.sps
             elif event.key in (pygame.K_RETURN, pygame.K_KP_ENTER):
                 if self.simulation_is_running:
                     self.simulation_is_running = False
                 self.step()
+            elif not event.mod & pygame.KMOD_CTRL:
+                # Ignore these keypresses if ctrl is pressed to not interfere with camera zooming.
+                if event.key in (pygame.K_PLUS, pygame.K_KP_PLUS):
+                    self.sps = min(self.sps * 2, SPS_MAX)
+                    self.time_per_step = 1 / self.sps
+                elif event.key in (pygame.K_MINUS, pygame.K_KP_MINUS):
+                    self.sps = max(self.sps / 2, SPS_MIN)
+                    self.time_per_step = 1 / self.sps
             elif event.key == pygame.K_BACKSPACE:
                 if event.mod & pygame.KMOD_CTRL:
                     self.cells.clear()
