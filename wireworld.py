@@ -16,13 +16,5 @@ parser.add_argument(
     help="Specify the window width and height in pixels.",
     default=constants.DEEFAULT_WINDOW_SIZE
 )
-parser.add_argument(
-    "-c",
-    "--cell-width",
-    metavar="<width>",
-    type=int,
-    help="Specify the cell width in pixels.",
-    default=constants.DEFAULT_CELL_WIDTH
-)
 args = parser.parse_args()
-run.run(args.window_size, args.cell_width)
+run.run(args.window_size)

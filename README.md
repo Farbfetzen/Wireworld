@@ -46,4 +46,3 @@ A half adder. Left are the two inputs. Top right is the ones output and bottom r
 ### Optional Command Line Arguments
 - **-h**, **--help**: Show a help message and exit.
 - **-w**, **--window-size \<width> \<height>**: Specify the window width and height in pixels.
-- **-c**, **--cell-width \<width>**: Specify the cell width in pixels.

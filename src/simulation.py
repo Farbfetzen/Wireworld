@@ -5,10 +5,9 @@ from src.cell import Cell
 
 
 class Simulation:
-    def __init__(self, camera, cell_width, cells):
+    def __init__(self, camera, cells):
         self.cells = cells
         self.camera = camera
-        self.cell_width = cell_width
         self.mouse_is_pressed = False
         self.last_changed_cell_position = None
         self.sps = SPS

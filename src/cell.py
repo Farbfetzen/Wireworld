@@ -5,30 +5,26 @@ from src.constants import *
 
 class Cell:
     images = ()
-    width = DEFAULT_CELL_WIDTH
-    size = (DEFAULT_CELL_WIDTH, DEFAULT_CELL_WIDTH)
     cells = {}
 
     @staticmethod
-    def static_init(cell_width, cell_size, camera, cells):
-        conductor_image = pygame.Surface(cell_size)
+    def static_init(camera, cells):
+        conductor_image = pygame.Surface(CELL_SIZE)
         conductor_image.fill(CONDUCTOR_COLOR)
-        head_image = pygame.Surface(cell_size)
+        head_image = pygame.Surface(CELL_SIZE)
         head_image.fill(ELECTRON_HEAD_COLOR)
-        tail_image = pygame.Surface(cell_size)
+        tail_image = pygame.Surface(CELL_SIZE)
         tail_image.fill(ELECTRON_TAIL_COLOR)
         Cell.images = (conductor_image, head_image, tail_image)
-        Cell.width = cell_width
-        Cell.size = cell_size
         Cell.camera = camera
         Cell.cells = cells
 
     def __init__(self, camera):
         self.grid_position = camera.mouse_grid_position
-        self.world_position = pygame.Vector2(self.grid_position) * Cell.width
+        self.world_position = pygame.Vector2(self.grid_position) * CELL_WIDTH
         self.screen_position = pygame.Vector2()
         self.update_screen_position(camera.surface_rect.topleft)
-        self.rect = pygame.Rect(self.world_position, Cell.size)
+        self.rect = pygame.Rect(self.world_position, CELL_SIZE)
         self.state = 0  # 0 = conductor, 1 = electron head, 2 = electron tail
         self.next_state = self.state
         self.image = Cell.images[self.state]

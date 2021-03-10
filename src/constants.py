@@ -7,9 +7,10 @@ SPS_MIN = 1
 SPS_MAX = 256
 
 DEEFAULT_WINDOW_SIZE = (1001, 801)  # +1 so that the rightmost and bottommost grid lines are visible
-DEFAULT_CELL_WIDTH = 20
+CELL_WIDTH = 20
+CELL_SIZE = (CELL_WIDTH, CELL_WIDTH)
 
-CAMERA_MOVE_SPEED_KEYBOARD = 750
+CAMERA_MOVE_SPEED_KEYBOARD = 750  # pixels per second
 CAMERA_DEFAULT_ZOOM_LEVEL = 1
 CAMERA_ZOOM_STEP = 0.1  # change per zoom step relative to window window_rect size
 CAMERA_ZOOM_MIN = 0.5

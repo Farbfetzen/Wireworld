@@ -6,13 +6,12 @@ from src.camera import Camera
 from src.cell import Cell
 
 
-def run(window_size, cell_width):
+def run(window_size):
     pygame.init()
     cells = {}
-    cell_size = (cell_width, cell_width)
-    camera = Camera(window_size, cell_width, cell_size, cells)
-    Cell.static_init(cell_width, cell_size, camera, cells)
-    simulation = Simulation(camera, cell_width, cells)
+    camera = Camera(window_size, cells)
+    Cell.static_init(camera, cells)
+    simulation = Simulation(camera, cells)
     clock = pygame.time.Clock()
     debug_mode = False
 
