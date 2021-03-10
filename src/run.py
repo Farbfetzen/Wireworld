@@ -11,7 +11,7 @@ def run(window_size, cell_width):
     cells = {}
     cell_size = (cell_width, cell_width)
     camera = Camera(window_size, cell_width, cell_size, cells)
-    Cell.init_class_variables(cell_width, cell_size, camera, cells)
+    Cell.static_init(cell_width, cell_size, camera, cells)
     simulation = Simulation(camera, cell_width, cells)
     clock = pygame.time.Clock()
     debug_mode = False
