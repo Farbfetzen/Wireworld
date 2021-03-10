@@ -37,9 +37,10 @@ A half adder. Left are the two inputs. Top right is the ones output and bottom r
 | Delete all electrons | **Backspace** |  |
 | Delete all wires | **Ctrl** + **Backspace** |  |
 | Move the map | **W**, **A**, **S**, **D** | Right mouse button |
-| Zoom in | Mouse wheel up | **Ctrl** + **+** |
-| Zoom out | Mouse wheel down | **Ctrl** + **-** |
-| Quit | Esc |  |
+| Zoom in | **Ctrl** + **+** | Mouse wheel up |
+| Zoom out | **Ctrl** + **-** | Mouse wheel down |
+| Reset zoom | **Ctrl** + **0** |
+| Quit | **Esc** |  |
 
 
 ### Optional Command Line Arguments

@@ -35,11 +35,13 @@ class Camera:
                 self.keyboard_move_direction.y -= CAMERA_MOVE_SPEED_KEYBOARD
             elif event.key == pygame.K_d:
                 self.keyboard_move_direction.x -= CAMERA_MOVE_SPEED_KEYBOARD
-            elif event.key in (pygame.K_PLUS, pygame.K_KP_PLUS) and event.mod & pygame.KMOD_CTRL:
-                self.zoom_level_new -= CAMERA_ZOOM_STEP
-            elif event.key in (pygame.K_MINUS, pygame.K_KP_MINUS) and event.mod & pygame.KMOD_CTRL:
-                self.zoom_level_new += CAMERA_ZOOM_STEP
-            # TODO: reset zoom position with ctrl + 0 or ctrl + num_0
+            elif event.mod & pygame.KMOD_CTRL:
+                if event.key in (pygame.K_PLUS, pygame.K_KP_PLUS):
+                    self.zoom_level_new -= CAMERA_ZOOM_STEP
+                elif event.key in (pygame.K_MINUS, pygame.K_KP_MINUS):
+                    self.zoom_level_new += CAMERA_ZOOM_STEP
+                elif event.key in (pygame.K_0, pygame.K_KP_0):
+                    self.zoom_level_new = 1
         elif event.type == pygame.KEYUP:
             if event.key == pygame.K_w:
                 self.keyboard_move_direction.y -= CAMERA_MOVE_SPEED_KEYBOARD
