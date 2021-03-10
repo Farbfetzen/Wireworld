@@ -60,7 +60,8 @@ class Camera:
 
     def update(self, dt):
         # I collect all move and zoom events before updating the camera
-        # because there often are multiple such events per frame.
+        # because there often are multiple such events per frame. That's why
+        # I move and zoom here in update() and not in process_event().
         self.move(dt)
         self.zoom()
         if self.camera_has_changed:
@@ -68,7 +69,7 @@ class Camera:
                 cell.update_screen_position(self.surface_rect.topleft)
             self.camera_has_changed = False
 
-        self.update_mouse_position()  # must be done AFTER moving and zooming the camera!
+        self.update_mouse_position()  # Must be done AFTER moving and zooming the camera!
 
     def move(self, dt):
         distance = self.mouse_movement_rel + self.keyboard_move_direction * dt
