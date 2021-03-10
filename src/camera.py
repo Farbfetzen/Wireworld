@@ -14,7 +14,7 @@ class Camera:
         self.mouse_grid_position = (0, 0)  # no Vector2 because I want integers
         self.mouse_rect = pygame.Rect(self.mouse_grid_position, cell_size)
         self.mouse_screen_position = pygame.Vector2()
-        self.zoom_level = 1
+        self.zoom_level = CAMERA_DEFAULT_ZOOM_LEVEL
         self.zoom_level_new = self.zoom_level
         self.window_size = self.window.get_size()
         self.surface_rect = self.window.get_rect()
@@ -41,7 +41,7 @@ class Camera:
                 elif event.key in (pygame.K_MINUS, pygame.K_KP_MINUS):
                     self.zoom_level_new += CAMERA_ZOOM_STEP
                 elif event.key in (pygame.K_0, pygame.K_KP_0):
-                    self.zoom_level_new = 1
+                    self.zoom_level_new = CAMERA_DEFAULT_ZOOM_LEVEL
         elif event.type == pygame.KEYUP:
             if event.key == pygame.K_w:
                 self.keyboard_move_direction.y -= CAMERA_MOVE_SPEED_KEYBOARD
@@ -51,10 +51,12 @@ class Camera:
                 self.keyboard_move_direction.y += CAMERA_MOVE_SPEED_KEYBOARD
             elif event.key == pygame.K_d:
                 self.keyboard_move_direction.x += CAMERA_MOVE_SPEED_KEYBOARD
-        elif event.type == pygame.MOUSEMOTION and event.buttons[2]:  # 2 = right mouse button
+        elif event.type == pygame.MOUSEMOTION and event.buttons[2]:  # right mouse button
             self.mouse_movement_rel += event.rel
         elif event.type == pygame.MOUSEWHEEL:
             self.zoom_level_new -= event.y * CAMERA_ZOOM_STEP
+        elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 2:  # middle mouse button
+            self.zoom_level_new = CAMERA_DEFAULT_ZOOM_LEVEL
 
     def update(self, dt):
         # I collect all move and zoom events before updating the camera

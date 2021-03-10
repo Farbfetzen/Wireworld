@@ -40,9 +40,8 @@ class Simulation:
                 else:
                     for c in self.cells.values():
                         c.remove_electricity()
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            if event.button == 1:  # 1 = left click
-                self.mouse_is_pressed = True
+        elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # left click
+            self.mouse_is_pressed = True
         elif event.type == pygame.MOUSEBUTTONUP:
             self.mouse_is_pressed = False
             self.last_changed_cell_position = None
