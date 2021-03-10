@@ -117,12 +117,12 @@ class Camera:
         for x in range(self.cell_width - (self.surface_rect.x % self.cell_width),
                        self.surface_rect.width,
                        self.cell_width):
-            pygame.draw.line(self.surface, GRID_COLOR, (x, 0), (x, self.window_height))
+            pygame.draw.line(self.surface, GRID_COLOR, (x, 0), (x, self.surface_rect.height))
 
         for y in range(self.cell_width - (self.surface_rect.y % self.cell_width),
                        self.surface_rect.height,
                        self.cell_width):
-            pygame.draw.line(self.surface, GRID_COLOR, (0, y), (self.window_width, y))
+            pygame.draw.line(self.surface, GRID_COLOR, (0, y), (self.surface_rect.width, y))
 
     def draw_cells(self):
         visible_cells = self.surface_rect.collidedictall(self.cells, True)
