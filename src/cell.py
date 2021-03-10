@@ -23,10 +23,11 @@ class Cell:
         Cell.camera = camera
         Cell.cells = cells
 
-    def __init__(self, grid_position):
-        self.grid_position = grid_position
+    def __init__(self, camera):
+        self.grid_position = camera.mouse_grid_position
         self.world_position = pygame.Vector2(self.grid_position) * Cell.width
-        self.screen_position = pygame.Vector2(self.world_position)
+        self.screen_position = pygame.Vector2()
+        self.update_screen_position(camera.surface_rect.topleft)
         self.rect = pygame.Rect(self.world_position, Cell.size)
         self.state = 0  # 0 = conductor, 1 = electron head, 2 = electron tail
         self.next_state = self.state

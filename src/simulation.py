@@ -64,9 +64,7 @@ class Simulation:
             erase_mode = pygame.key.get_mods() & pygame.KMOD_CTRL
             if selected_cell is None:
                 if not erase_mode:
-                    self.cells[self.camera.mouse_grid_position] = Cell(
-                        self.camera.mouse_grid_position
-                    )
+                    self.cells[self.camera.mouse_grid_position] = Cell(self.camera)
             else:
                 if erase_mode:
                     selected_cell.delete()

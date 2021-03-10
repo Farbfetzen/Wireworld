@@ -14,8 +14,8 @@ class Camera:
         self.mouse_grid_position = (0, 0)  # no Vector2 because I want integers
         self.mouse_rect = pygame.Rect(self.mouse_grid_position, cell_size)
         self.mouse_screen_position = pygame.Vector2()
-        self.zoom_level_current = 1
-        self.zoom_level_new = self.zoom_level_current
+        self.zoom_level = 1
+        self.zoom_level_new = self.zoom_level
         self.window_size = self.window.get_size()
         self.surface_rect = self.window.get_rect()
         self.surface = pygame.Surface(self.surface_rect.size)
@@ -39,6 +39,7 @@ class Camera:
                 self.zoom_level_new -= CAMERA_ZOOM_STEP
             elif event.key in (pygame.K_MINUS, pygame.K_KP_MINUS) and event.mod & pygame.KMOD_CTRL:
                 self.zoom_level_new += CAMERA_ZOOM_STEP
+            # TODO: reset zoom position with ctrl + 0 or ctrl + num_0
         elif event.type == pygame.KEYUP:
             if event.key == pygame.K_w:
                 self.keyboard_move_direction.y -= CAMERA_MOVE_SPEED_KEYBOARD
@@ -68,7 +69,7 @@ class Camera:
     def move(self, dt):
         distance = self.mouse_movement_rel + self.keyboard_move_direction * dt
         if distance != (0, 0):
-            distance *= self.zoom_level_current
+            distance *= self.zoom_level
             self.position -= distance
             self.surface_rect.center = self.position
             self.mouse_movement_rel.update(0, 0)
@@ -76,29 +77,35 @@ class Camera:
 
     def zoom(self):
         self.zoom_level_new = max(min(self.zoom_level_new, CAMERA_ZOOM_MAX), CAMERA_ZOOM_MIN)
-        if self.zoom_level_new != self.zoom_level_current:
-            diff = self.zoom_level_new - self.zoom_level_current
+        if self.zoom_level_new != self.zoom_level:
+            diff = self.zoom_level_new - self.zoom_level
             self.surface_rect.inflate_ip(self.window_size[0] * diff, self.window_size[1] * diff)
             self.surface = pygame.Surface(self.surface_rect.size)
-            self.zoom_level_current = self.zoom_level_new
+            self.zoom_level = self.zoom_level_new
             self.camera_has_changed = True
 
-    def update_mouse_position(self):
-        screen_x, screen_y = pygame.mouse.get_pos()
-        grid_x = (screen_x + self.surface_rect.x) // self.cell_width
-        grid_y = (screen_y + self.surface_rect.y) // self.cell_width
-        self.mouse_grid_position = (grid_x, grid_y)
-        self.mouse_rect.topleft = (
-            grid_x * self.cell_width - self.surface_rect.x,
-            grid_y * self.cell_width - self.surface_rect.y
+    def screen_to_world_position(self, screen_x, screen_y):
+        return (
+            screen_x * self.zoom_level + self.surface_rect.x,
+            screen_y * self.zoom_level + self.surface_rect.y,
         )
 
     def world_to_screen_position(self, world_x, world_y):
-        world_x -= self.surface_rect.x
-        world_y -= self.surface_rect.y
         return (
-            world_x / self.surface_rect.width * self.window_width,
-            world_y / self.surface_rect.height * self.window_height
+            (world_x - self.surface_rect.x) / self.zoom_level,
+            (world_y - self.surface_rect.y) / self.zoom_level
+        )
+
+    def update_mouse_position(self):
+        world_x, world_y = self.screen_to_world_position(*pygame.mouse.get_pos())
+        grid_x = world_x // self.cell_width
+        grid_y = world_y // self.cell_width
+        self.mouse_grid_position = (grid_x, grid_y)
+        # Note that mouse_rect is positioned on the surface, not the window.
+        # Therefore the zoom level is irrelevant here.
+        self.mouse_rect.topleft = (
+            grid_x * self.cell_width - self.surface_rect.x,
+            grid_y * self.cell_width - self.surface_rect.y
         )
 
     def draw(self, debug_mode, fps):
@@ -107,10 +114,8 @@ class Camera:
         self.draw_cells()
         pygame.draw.rect(self.surface, MOUSE_HIGHLIGHT_COLOR, self.mouse_rect, 1)
         pygame.transform.smoothscale(self.surface, self.window_size, self.window)
-
         if debug_mode:
             self.draw_debug_info(fps)
-        # pygame.draw.rect(self.window, MOUSE_HIGHLIGHT_COLOR, self.surface_rect, 1)  # DEBUG
         pygame.display.flip()
 
     def draw_grid(self):
@@ -155,5 +160,5 @@ class Camera:
         DEBUG_FONT.render_to(
             self.window,
             DEBUG_MARGIN + DEBUG_LINE_SPACING * 4,
-            f"zoom level: {self.zoom_level_current:.2f}"
+            f"zoom level: {self.zoom_level:.2f}"
         )
