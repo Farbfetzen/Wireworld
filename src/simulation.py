@@ -27,6 +27,12 @@ class Simulation:
                 if self.simulation_is_running:
                     self.simulation_is_running = False
                 self.step()
+            elif event.key == pygame.K_BACKSPACE:
+                if event.mod & pygame.KMOD_CTRL:
+                    self.cells.clear()
+                else:
+                    for c in self.cells.values():
+                        c.remove_electricity()
             elif not event.mod & pygame.KMOD_CTRL:
                 # Ignore these keypresses if ctrl is pressed to not interfere with camera zooming.
                 if event.key in (pygame.K_PLUS, pygame.K_KP_PLUS):
@@ -35,12 +41,6 @@ class Simulation:
                 elif event.key in (pygame.K_MINUS, pygame.K_KP_MINUS):
                     self.sps = max(self.sps / 2, SPS_MIN)
                     self.time_per_step = 1 / self.sps
-            elif event.key == pygame.K_BACKSPACE:
-                if event.mod & pygame.KMOD_CTRL:
-                    self.cells.clear()
-                else:
-                    for c in self.cells.values():
-                        c.remove_electricity()
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # left click
             self.mouse_is_pressed = True
         elif event.type == pygame.MOUSEBUTTONUP:
