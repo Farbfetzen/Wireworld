@@ -1,1 +1,4 @@
 ideas.md
+
+.venv/
+__pycache__/
