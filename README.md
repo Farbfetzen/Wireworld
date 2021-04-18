@@ -29,20 +29,20 @@ A half adder. Left are the two inputs. Top right is the ones output and bottom r
 | Action | Binding | Alternative |
 | --- | --- | --- |
 | Change cell state | Left mouse button |  |
-| Pause/unpause the simulation | **Space** |  |
-| Single step | **Enter** |  |
-| Increase speed | **+** |  |
-| Decrease speed | **-** |  |
-| Delete cell | **Ctrl** + Left mouse button |  |
-| Delete all electrons | **Backspace** |  |
-| Delete all wires | **Ctrl** + **Backspace** |  |
-| Move the map | **W**, **A**, **S**, **D** | Right mouse button |
-| Zoom in | **Ctrl** + **+** | Mouse wheel up |
-| Zoom out | **Ctrl** + **-** | Mouse wheel down |
-| Reset zoom | **Ctrl** + **0** | Middle mouse button |
-| Quit | **Esc** |  |
+| Pause/unpause the simulation | Space |  |
+| Single step | Enter |  |
+| Increase speed | + |  |
+| Decrease speed | - |  |
+| Delete cell | Ctrl + Left mouse button |  |
+| Delete all electrons | Backspace |  |
+| Delete all wires | Ctrl + Backspace |  |
+| Move the map | W, A, S, D | Right mouse button |
+| Zoom in | Ctrl + | Mouse wheel up |
+| Zoom out | Ctrl - | Mouse wheel down |
+| Reset zoom | Ctrl 0 | Middle mouse button |
+| Quit | Esc |  |
 
 
 ### Optional Command Line Arguments
-- **-h**, **--help**: Show a help message and exit.
-- **-w**, **--window-size \<width> \<height>**: Specify the window width and height in pixels.
+- -h, --help: Show a help message and exit.
+- -w, --window-size \<width> \<height>: Specify the window width and height in pixels.
